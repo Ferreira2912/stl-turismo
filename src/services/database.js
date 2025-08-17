@@ -1,0 +1,123 @@
+import { 
+  collection, 
+  doc, 
+  getDoc, 
+  getDocs, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  query, 
+  where, 
+  orderBy, 
+  limit 
+} from 'firebase/firestore';
+import { db } from './firebase';
+
+// Pacotes
+export const getPackages = async (limitNum = 50) => {
+  try {
+    const q = query(
+      collection(db, 'packages'), 
+      where('active', '==', true),
+      orderBy('createdAt', 'desc'),
+      limit(limitNum)
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar pacotes:', error);
+    return [];
+  }
+};
+
+export const getPackageById = async (id) => {
+  try {
+    const docRef = doc(db, 'packages', id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return { id: docSnap.id, ...docSnap.data() };
+    }
+    return null;
+  } catch (error) {
+    console.error('Erro ao buscar pacote:', error);
+    return null;
+  }
+};
+
+export const getFeaturedPackages = async () => {
+  try {
+    const q = query(
+      collection(db, 'packages'),
+      where('featured', '==', true),
+      where('active', '==', true),
+      orderBy('priority', 'desc'),
+      limit(6)
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar pacotes em destaque:', error);
+    return [];
+  }
+};
+
+// Destinos
+export const getDestinations = async () => {
+  try {
+    const q = query(
+      collection(db, 'destinations'),
+      where('active', '==', true),
+      orderBy('name')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar destinos:', error);
+    return [];
+  }
+};
+
+// Leads/Contatos
+export const createLead = async (leadData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'leads'), {
+      ...leadData,
+      status: 'new',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Erro ao criar lead:', error);
+    throw error;
+  }
+};
+
+// Blog Posts
+export const getBlogPosts = async (limitNum = 10) => {
+  try {
+    const q = query(
+      collection(db, 'blog_posts'),
+      where('published', '==', true),
+      orderBy('publishedAt', 'desc'),
+      limit(limitNum)
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar posts do blog:', error);
+    return [];
+  }
+};
