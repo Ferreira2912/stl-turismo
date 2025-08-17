@@ -12,7 +12,7 @@ import Button from '../common/Button';
 import Loading from '../common/Loading';
 
 const STLTurismoHome = () => {
-  const { packages: featuredPackages, loading: packagesLoading } = usePackages(true);
+  const { packages: featuredPackages, loading: packagesLoading, isUsingFirebase } = usePackages(true);
   const { destinations, loading: destinationsLoading } = useDestinations();
   const { openWhatsApp, formatWhatsAppMessage } = useWhatsApp();
   const [isVisible, setIsVisible] = useState({});

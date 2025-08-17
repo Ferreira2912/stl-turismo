@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useWhatsApp } from './useWhatsApp';
+import { createReservation } from '../services/database';
 
 export const useReservation = () => {
   const { openWhatsApp } = useWhatsApp();
@@ -242,15 +243,64 @@ export const useReservation = () => {
     return { subject, body };
   };
 
-  const sendWhatsAppReservation = () => {
-    const message = formatReservationMessage();
-    openWhatsApp(message);
+  const sendWhatsAppReservation = async () => {
+    try {
+      setIsSubmitting(true);
+      
+      // Salvar reserva no Firebase
+      const reservationId = await createReservation({
+        ...reservationData,
+        channel: 'whatsapp',
+        source: 'website'
+      });
+      
+      console.log('✅ Reserva salva no Firebase:', reservationId);
+      
+      // Enviar WhatsApp
+      const message = formatReservationMessage();
+      openWhatsApp(message);
+      
+      return reservationId;
+    } catch (error) {
+      console.error('❌ Erro ao processar reserva:', error);
+      // Mesmo com erro no Firebase, enviar WhatsApp
+      const message = formatReservationMessage();
+      openWhatsApp(message);
+      throw error;
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const sendEmailReservation = () => {
-    const { subject, body } = formatEmailData();
-    const mailtoLink = `mailto:contato@stlturismo.com.br?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.open(mailtoLink);
+  const sendEmailReservation = async () => {
+    try {
+      setIsSubmitting(true);
+      
+      // Salvar reserva no Firebase
+      const reservationId = await createReservation({
+        ...reservationData,
+        channel: 'email',
+        source: 'website'
+      });
+      
+      console.log('✅ Reserva salva no Firebase:', reservationId);
+      
+      // Enviar Email
+      const { subject, body } = formatEmailData();
+      const mailtoLink = `mailto:contato@stlturismo.com.br?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.open(mailtoLink);
+      
+      return reservationId;
+    } catch (error) {
+      console.error('❌ Erro ao processar reserva:', error);
+      // Mesmo com erro no Firebase, enviar email
+      const { subject, body } = formatEmailData();
+      const mailtoLink = `mailto:contato@stlturismo.com.br?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.open(mailtoLink);
+      throw error;
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const resetReservation = () => {

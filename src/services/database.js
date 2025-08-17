@@ -102,6 +102,55 @@ export const createLead = async (leadData) => {
   }
 };
 
+// Reservas
+export const createReservation = async (reservationData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'reservations'), {
+      ...reservationData,
+      status: 'pending',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+    console.log('✅ Reserva criada no Firebase:', docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error('❌ Erro ao criar reserva:', error);
+    throw error;
+  }
+};
+
+export const getReservations = async (limitNum = 50) => {
+  try {
+    const q = query(
+      collection(db, 'reservations'),
+      orderBy('createdAt', 'desc'),
+      limit(limitNum)
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar reservas:', error);
+    return [];
+  }
+};
+
+export const updateReservationStatus = async (reservationId, status) => {
+  try {
+    const docRef = doc(db, 'reservations', reservationId);
+    await updateDoc(docRef, {
+      status,
+      updatedAt: new Date()
+    });
+    return true;
+  } catch (error) {
+    console.error('Erro ao atualizar status da reserva:', error);
+    throw error;
+  }
+};
+
 // Blog Posts
 export const getBlogPosts = async (limitNum = 10) => {
   try {
