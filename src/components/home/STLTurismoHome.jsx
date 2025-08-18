@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Phone, MessageCircle, MapPin, Star, Calendar, Users, Shield, Award, ChevronRight, Menu, X, Compass, Globe, Heart } from 'lucide-react';
-import { usePackages } from '../../hooks/usePackages';
-import { useDestinations } from '../../hooks/useDestinations';
+import { getFeaturedPackages } from '../../services/database';
 import { useWhatsApp } from '../../hooks/useWhatsApp';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
@@ -12,11 +12,28 @@ import Button from '../common/Button';
 import Loading from '../common/Loading';
 
 const STLTurismoHome = () => {
-  const { packages: featuredPackages, loading: packagesLoading, isUsingFirebase } = usePackages(true);
-  const { destinations, loading: destinationsLoading } = useDestinations();
+  const [featuredPackages, setFeaturedPackages] = useState([]);
+  const [packagesLoading, setPackagesLoading] = useState(true);
   const { openWhatsApp, formatWhatsAppMessage } = useWhatsApp();
   const [isVisible, setIsVisible] = useState({});
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    loadFeaturedPackages();
+  }, []);
+
+  const loadFeaturedPackages = async () => {
+    try {
+      setPackagesLoading(true);
+      const data = await getFeaturedPackages();
+      setFeaturedPackages(data);
+    } catch (error) {
+      console.error('Erro ao carregar pacotes em destaque:', error);
+    } finally {
+      setPackagesLoading(false);
+    }
+  };
 
   // Imagens dos destinos para o carrossel
   const heroImages = [
@@ -126,7 +143,7 @@ const STLTurismoHome = () => {
             <Button 
               variant="primary"
               size="xl"
-              onClick={() => openWhatsApp("Gostaria de conhecer os pacotes disponíveis!")}
+              onClick={() => navigate('/pacotes')}
               className="group relative overflow-hidden bg-primary-600 hover:bg-primary-700 transform hover:scale-105 transition-all duration-300"
             >
               <span className="relative z-10 flex items-center">
@@ -138,6 +155,7 @@ const STLTurismoHome = () => {
             <Button 
               variant="outline"
               size="xl"
+              onClick={() => navigate('/frota')}
               className="border-2 border-white/80 text-white hover:bg-white hover:text-neutral-900 backdrop-blur-sm bg-white/10 transform hover:scale-105 transition-all duration-300"
             >
               Nossa Frota
@@ -180,83 +198,108 @@ const STLTurismoHome = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredPackages.map((pkg, index) => (
-                <div 
-                  key={pkg.id}
-                  className={`group transition-all duration-700 ${isVisible.packages ? 'animate-fade-in-up' : 'opacity-0 translate-y-10'}`}
-                  style={{animationDelay: `${index * 0.2}s`}}
-                >
-                  <div className="relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-neutral-100">
-                    {/* Image */}
-                    <div className="relative overflow-hidden h-64">
-                      <img 
-                        src={pkg.image} 
-                        alt={pkg.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                      
-                      {/* Discount Badge */}
-                      {pkg.originalPrice && pkg.price < pkg.originalPrice && (
-                        <div className="absolute top-4 left-4 bg-accent-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
-                          {Math.round(((pkg.originalPrice - pkg.price) / pkg.originalPrice) * 100)}% OFF
-                        </div>
-                      )}
-                      
-                      {/* Duration Badge */}
-                      <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm text-neutral-800 px-3 py-1 rounded-full text-sm font-semibold flex items-center">
-                        <Calendar size={14} className="mr-1" />
-                        {pkg.duration}
-                      </div>
-                      
-                      {/* Departure Date Badge */}
-                      <div className="absolute bottom-4 right-4 bg-primary-600/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center">
-                        <MapPin size={14} className="mr-1" />
-                        {new Date(pkg.departureDate).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
-                      </div>
-                    </div>
-                    
-                    {/* Content */}
-                    <div className="p-8">
-                      <h3 className="text-2xl font-bold text-neutral-900 mb-2 group-hover:text-primary-600 transition-colors">
-                        {pkg.title}
-                      </h3>
-                      <p className="text-neutral-600 mb-6 leading-relaxed">{pkg.subtitle}</p>
-                      
-                      {/* Highlights */}
-                      <div className="space-y-2 mb-8">
-                        {pkg.highlights.slice(0, 3).map((highlight, idx) => (
-                          <div key={idx} className="flex items-center text-sm text-neutral-700">
-                            <div className="w-2 h-2 bg-primary-500 rounded-full mr-3 flex-shrink-0"></div>
-                            {highlight}
-                          </div>
-                        ))}
-                      </div>
-                      
-                      {/* Price and CTA */}
-                      <div className="flex items-center justify-between">
-                        <div>
-                          {pkg.originalPrice && (
-                            <p className="text-sm text-neutral-400 line-through">
-                              R$ {pkg.originalPrice.toLocaleString()}
-                            </p>
-                          )}
-                          <p className="text-3xl font-bold text-primary-600">
-                            R$ {pkg.price.toLocaleString()}
-                          </p>
-                          <p className="text-sm text-neutral-500">por pessoa</p>
-                        </div>
-                        <ReservationButton 
-                          packageData={pkg}
-                          text="Reservar"
-                          size="md"
-                          className="bg-primary-600 hover:bg-primary-700 transform hover:scale-105 transition-all duration-300 rounded-xl"
+              {featuredPackages.map((pkg, index) => {
+                const mainImage = pkg.images?.[0] || pkg.image;
+                const currentPrice = pkg.promotionalPrice || pkg.price || 0;
+                const installments = pkg.installments && pkg.installments > 1 ? pkg.installments : null;
+                const departure = pkg.departureDate ? new Date(pkg.departureDate) : null;
+                const returnDate = pkg.returnDate ? new Date(pkg.returnDate) : null;
+                return (
+                  <div 
+                    key={pkg.id}
+                    className={`group transition-all duration-700 ${isVisible.packages ? 'animate-fade-in-up' : 'opacity-0 translate-y-10'}`}
+                    style={{animationDelay: `${index * 0.15}s`}}
+                  >
+                    <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 border border-neutral-100 flex flex-col h-full">
+                      {/* Image */}
+                      <div className="relative overflow-hidden h-72">
+                        <img 
+                          src={mainImage} 
+                          alt={pkg.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                        {/* Discount Badge */}
+                        {pkg.originalPrice && pkg.promotionalPrice && pkg.promotionalPrice < pkg.originalPrice && (
+                          <div className="absolute top-4 left-4 bg-accent-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                            {Math.round(((pkg.originalPrice - pkg.promotionalPrice) / pkg.originalPrice) * 100)}% OFF
+                          </div>
+                        )}
+                        {/* Duration */}
+                        {pkg.duration && (
+                          <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm text-neutral-800 px-3 py-1 rounded-full text-xs font-semibold flex items-center">
+                            <Calendar size={12} className="mr-1" />
+                            {pkg.duration}
+                          </div>
+                        )}
+                        {/* Destination Badge (replaces departure date) */}
+                        {(() => {
+                          const destinationText = pkg.destination || pkg.location || pkg.city || (pkg.title ? pkg.title.split(/[-–—]|\|/)[0].trim() : null);
+                          return destinationText ? (
+                            <div className="absolute bottom-4 right-4 bg-primary-600/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center max-w-[60%]">
+                              <MapPin size={12} className="mr-1 flex-shrink-0" />
+                              <span className="truncate">{destinationText}</span>
+                            </div>
+                          ) : null;
+                        })()}
+                      </div>
+                      {/* Content */}
+                      <div className="p-3 flex flex-col h-full">
+                        <h3 className="text-xl font-bold text-neutral-900 mb-1 group-hover:text-primary-600 transition-colors leading-snug">
+                          {pkg.title}
+                        </h3>
+                        {(pkg.departureDate || pkg.returnDate) && (
+                          <div className="flex items-center text-xs md:text-sm text-neutral-500 mb-3">
+                            <Calendar size={12} className="mr-1 text-primary-600" />
+                            <span>
+                              {departure ? departure.toLocaleDateString('pt-BR') : 'Data a definir'} - {returnDate ? returnDate.toLocaleDateString('pt-BR') : 'Data a definir'}
+                            </span>
+                          </div>
+                        )}
+                        <div className="text-neutral-600 mb-4 leading-relaxed clamp-1 text-sm">
+                          {pkg.subtitle || pkg.description || ' '}
+                        </div>
+                        {/* Highlights / Includes */}
+                        <div className="space-y-1 mb-4 text-xs md:text-sm">
+                          {(pkg.highlights?.length ? pkg.highlights : pkg.includes)?.slice(0,2).map((h,i)=>(
+                            <div key={i} className="flex items-center text-neutral-700">
+                              <div className="w-1.5 h-1.5 bg-primary-500 rounded-full mr-2 flex-shrink-0"></div>
+                              <span className="truncate">{h}</span>
+                            </div>
+                          ))}
+                        </div>
+                        {/* Price / Installments + Details */}
+                        <div className="mt-auto flex items-end justify-between gap-3">
+                          <div className="flex flex-col">
+                            {installments ? (
+                              <span className="text-sm font-semibold text-primary-600">
+                                {installments}x de R$ {(currentPrice / installments).toLocaleString('pt-BR',{ minimumFractionDigits: 2 })}
+                              </span>
+                            ) : (
+                              <span className="text-lg font-bold text-primary-600">
+                                R$ {currentPrice.toLocaleString('pt-BR',{ minimumFractionDigits: 2 })}
+                              </span>
+                            )}
+                            {pkg.promotionalPrice && pkg.originalPrice && (
+                              <span className="text-[11px] text-neutral-400 line-through">
+                                R$ {pkg.originalPrice.toLocaleString('pt-BR',{ minimumFractionDigits: 2 })}
+                              </span>
+                            )}
+                          </div>
+                          <Button 
+                            variant="outline"
+                            size="sm"
+                            onClick={() => navigate(`/packages/${pkg.id}`)}
+                            className="border-primary-600 text-primary-600 hover:bg-primary-50 whitespace-nowrap"
+                          >
+                            Ver Detalhes
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -264,6 +307,7 @@ const STLTurismoHome = () => {
             <Button 
               variant="outline" 
               size="lg"
+              onClick={() => navigate('/pacotes')}
               className="border-2 border-primary-200 text-primary-600 hover:border-primary-500 hover:bg-primary-50 transform hover:scale-105 transition-all duration-300 rounded-xl"
             >
               Ver Todos os Pacotes
@@ -434,15 +478,6 @@ const STLTurismoHome = () => {
             >
               <MessageCircle size={20} className="mr-2" />
               Chamar no WhatsApp
-            </Button>
-            
-            <Button 
-              variant="outline"
-              size="xl"
-              className="border-2 border-white/30 text-white hover:bg-white hover:text-primary-700 backdrop-blur-sm bg-white/10 transform hover:scale-105 transition-all duration-300"
-            >
-              <Phone size={20} className="mr-2" />
-              Ligar Agora
             </Button>
           </div>
         </div>

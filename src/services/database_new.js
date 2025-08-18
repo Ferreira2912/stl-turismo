@@ -13,8 +13,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 
-// ===== PACOTES =====
-
+// Pacotes
 export const getPackages = async (limitNum = 50) => {
   try {
     const q = query(
@@ -30,23 +29,6 @@ export const getPackages = async (limitNum = 50) => {
     }));
   } catch (error) {
     console.error('Erro ao buscar pacotes:', error);
-    return [];
-  }
-};
-
-export const getAllPackages = async () => {
-  try {
-    const q = query(
-      collection(db, 'packages'),
-      orderBy('createdAt', 'desc')
-    );
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-  } catch (error) {
-    console.error('Erro ao buscar todos os pacotes:', error);
     return [];
   }
 };
@@ -68,25 +50,6 @@ export const getFeaturedPackages = async () => {
   } catch (error) {
     console.error('Erro ao buscar pacotes em destaque:', error);
     return [];
-  }
-};
-
-export const getPackageById = async (packageId) => {
-  try {
-    const docRef = doc(db, 'packages', packageId);
-    const docSnap = await getDoc(docRef);
-    
-    if (docSnap.exists()) {
-      return {
-        id: docSnap.id,
-        ...docSnap.data()
-      };
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error('Erro ao buscar pacote por ID:', error);
-    return null;
   }
 };
 
@@ -159,8 +122,57 @@ export const deletePackage = async (packageId) => {
   }
 };
 
-// ===== RESERVAS =====
+export const getPackageById = async (packageId) => {
+  try {
+    const docRef = doc(db, 'packages', packageId);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...docSnap.data()
+      };
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error('Erro ao buscar pacote por ID:', error);
+    return null;
+  }
+};
 
+// Destinos
+export const getDestinations = async () => {
+  try {
+    const q = query(collection(db, 'destinations'), orderBy('name'));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar destinos:', error);
+    return [];
+  }
+};
+
+// Leads
+export const createLead = async (leadData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'leads'), {
+      ...leadData,
+      createdAt: new Date(),
+      status: 'new'
+    });
+    console.log('✅ Lead criado no Firebase:', docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error('Erro ao criar lead:', error);
+    throw error;
+  }
+};
+
+// Reservas
 export const createReservation = async (reservationData) => {
   try {
     const docRef = await addDoc(collection(db, 'reservations'), {
@@ -209,28 +221,13 @@ export const updateReservationStatus = async (reservationId, status) => {
   }
 };
 
-// ===== LEADS =====
-
-export const createLead = async (leadData) => {
-  try {
-    const docRef = await addDoc(collection(db, 'leads'), {
-      ...leadData,
-      createdAt: new Date(),
-      status: 'new'
-    });
-    console.log('✅ Lead criado no Firebase:', docRef.id);
-    return docRef.id;
-  } catch (error) {
-    console.error('Erro ao criar lead:', error);
-    throw error;
-  }
-};
-
-export const getLeads = async (limitNum = 50) => {
+// Blog Posts
+export const getBlogPosts = async (limitNum = 10) => {
   try {
     const q = query(
-      collection(db, 'leads'),
-      orderBy('createdAt', 'desc'),
+      collection(db, 'blog_posts'),
+      where('published', '==', true),
+      orderBy('publishedAt', 'desc'),
       limit(limitNum)
     );
     const querySnapshot = await getDocs(q);
@@ -239,21 +236,7 @@ export const getLeads = async (limitNum = 50) => {
       ...doc.data()
     }));
   } catch (error) {
-    console.error('Erro ao buscar leads:', error);
+    console.error('Erro ao buscar posts do blog:', error);
     return [];
-  }
-};
-
-export const updateLeadStatus = async (leadId, status) => {
-  try {
-    const docRef = doc(db, 'leads', leadId);
-    await updateDoc(docRef, {
-      status,
-      updatedAt: new Date()
-    });
-    return true;
-  } catch (error) {
-    console.error('Erro ao atualizar status do lead:', error);
-    throw error;
   }
 };

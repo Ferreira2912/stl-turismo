@@ -188,12 +188,6 @@ const Fleet = () => {
     ? vehicles 
     : vehicles.filter(vehicle => vehicle.category === selectedCategory);
 
-  const stats = [
-    { number: '15+', label: 'Veículos na Frota', icon: Car },
-    { number: '100%', label: 'Veículos Revisados', icon: Settings },
-    { number: '24/7', label: 'Suporte Técnico', icon: Clock },
-    { number: '5⭐', label: 'Avaliação Média', icon: Star }
-  ];
 
   const safety = [
     {
@@ -277,28 +271,6 @@ const Fleet = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-32 bg-neutral-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <div 
-                  key={index}
-                  className="text-center bg-white p-8 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 border border-neutral-100"
-                >
-                  <div className="bg-primary-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                    <Icon size={28} />
-                  </div>
-                  <div className="text-4xl font-bold text-primary-600 mb-2">{stat.number}</div>
-                  <div className="text-neutral-700 font-medium">{stat.label}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
       {/* Fleet Gallery */}
       <section id="fleet" data-animate className="py-32 bg-white">

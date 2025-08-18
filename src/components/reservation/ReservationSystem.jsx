@@ -88,10 +88,10 @@ const ReservationSystem = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex">
+      <div className="bg-white w-full h-full overflow-y-auto flex flex-col">
         {/* Header */}
-        <div className="sticky top-0 bg-white rounded-t-3xl border-b border-neutral-200 p-6">
+  <div className="sticky top-0 bg-white border-b border-neutral-200 p-6 shadow-sm">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-neutral-900">
               Sistema de Reservas
@@ -149,7 +149,7 @@ const ReservationSystem = ({
         </div>
 
         {/* Content */}
-        <div className="p-6">
+  <div className="p-6 flex-1 overflow-y-auto">
           {currentStep === 1 && <TripInfoStep reservationData={reservationData} updateReservationData={updateReservationData} />}
           {currentStep === 2 && <PersonalInfoStep reservationData={reservationData} updateReservationData={updateReservationData} />}
           {currentStep === 3 && <CompanionsStep reservationData={reservationData} addCompanion={addCompanion} updateCompanion={updateCompanion} removeCompanion={removeCompanion} />}
@@ -157,7 +157,7 @@ const ReservationSystem = ({
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-neutral-50 rounded-b-3xl border-t border-neutral-200 p-6">
+  <div className="sticky bottom-0 bg-neutral-50 border-t border-neutral-200 p-6 shadow-inner">
           <div className="flex justify-between">
             <Button
               variant="outline"

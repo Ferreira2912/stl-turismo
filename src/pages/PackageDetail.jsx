@@ -3,9 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Calendar, MapPin, Star, Users, ChevronRight, ChevronLeft, 
   Phone, MessageCircle, Check, Info, Clock, DollarSign,
-  Camera, Utensils, Bed, Car, Shield, Award
+  Camera, Utensils, Bed, Car, Shield, Award, Minus,
+  Plane, Bus
 } from 'lucide-react';
-import { usePackages } from '../hooks/usePackages';
+import { getPackageById, getPackages } from '../services/database';
 import { useWhatsApp } from '../hooks/useWhatsApp';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
@@ -17,12 +18,34 @@ import Loading from '../components/common/Loading';
 const PackageDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { packages, loading } = usePackages(false);
+  const [packageData, setPackageData] = useState(null);
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { openWhatsApp } = useWhatsApp();
   const [isVisible, setIsVisible] = useState({});
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  const packageData = packages.find(pkg => pkg.id === id);
+  useEffect(() => {
+    const loadPackage = async () => {
+      try {
+        setLoading(true);
+        const data = await getPackageById(id);
+        setPackageData(data);
+        
+        // Load related packages
+        const allPackages = await getPackages();
+        setPackages(allPackages);
+      } catch (error) {
+        console.error('Erro ao carregar pacote:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      loadPackage();
+    }
+  }, [id]);
 
   useEffect(() => {
     const observerOptions = {
@@ -47,9 +70,9 @@ const PackageDetail = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Imagens adicionais para galeria (simulado)
+  // Imagens adicionais para galeria (Firebase + fallback)
   const additionalImages = [
-    packageData?.image,
+    ...(packageData?.images || []),
     'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop',
     'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
     'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop'
@@ -90,7 +113,7 @@ const PackageDetail = () => {
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
-            src={additionalImages[selectedImageIndex] || packageData.image}
+            src={additionalImages[selectedImageIndex] || (packageData.images && packageData.images[0]) || '/api/placeholder/1920/1080'}
             alt={packageData.title}
             className="w-full h-full object-cover"
           />
@@ -137,7 +160,7 @@ const PackageDetail = () => {
             </h1>
             
             <p className="text-2xl md:text-3xl text-accent-300 mb-8 font-medium">
-              {packageData.subtitle}
+              {packageData.description || packageData.subtitle}
             </p>
           </div>
           
@@ -147,14 +170,22 @@ const PackageDetail = () => {
                 <Calendar size={20} className="mr-2" />
                 {packageData.duration}
               </div>
+              {packageData.transportMode && (
+                <div className="flex items-center bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full capitalize">
+                  {packageData.transportMode === 'aereo' && <Plane size={20} className="mr-2" />}
+                  {packageData.transportMode === 'rodoviario' && <Bus size={20} className="mr-2" />}
+                  {packageData.transportMode === 'misto' && (<><Plane size={20} className="mr-1" /><Bus size={20} className="mr-2" /></>)}
+                  {packageData.transportMode}
+                </div>
+              )}
               <div className="flex items-center bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
                 <DollarSign size={20} className="mr-2" />
-                R$ {packageData.price.toLocaleString()}
+                R$ {(packageData.promotionalPrice || packageData.price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </div>
-              {packageData.originalPrice && (
+              {packageData.originalPrice && packageData.promotionalPrice && packageData.promotionalPrice < packageData.originalPrice && (
                 <div className="flex items-center bg-accent-500 px-4 py-2 rounded-full">
                   <span className="text-sm font-bold">
-                    {Math.round(((packageData.originalPrice - packageData.price) / packageData.originalPrice) * 100)}% OFF
+                    {Math.round(((packageData.originalPrice - packageData.promotionalPrice) / packageData.originalPrice) * 100)}% OFF
                   </span>
                 </div>
               )}
@@ -191,7 +222,7 @@ const PackageDetail = () => {
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-12">
               {/* Description */}
-              <div className={`transition-all duration-1000 ${isVisible.details ? 'animate-fade-in-up' : 'opacity-0 translate-y-10'}`}>
+              <div className="transition-all duration-1000">
                 <h2 className="text-4xl font-bold text-neutral-900 mb-6">Sobre este Pacote</h2>
                 <p className="text-lg text-neutral-700 leading-relaxed mb-8">
                   {packageData.description}
@@ -199,7 +230,7 @@ const PackageDetail = () => {
                 
                 {/* Highlights */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {packageData.highlights.map((highlight, index) => (
+                  {packageData.includes && packageData.includes.map((highlight, index) => (
                     <div 
                       key={index}
                       className="flex items-start bg-primary-50 p-4 rounded-xl border border-primary-100"
@@ -212,10 +243,10 @@ const PackageDetail = () => {
               </div>
 
               {/* What's Included */}
-              <div className={`transition-all duration-1000 ${isVisible.details ? 'animate-fade-in-up' : 'opacity-0 translate-y-10'}`} style={{animationDelay: '0.2s'}}>
+              <div className="transition-all duration-1000">
                 <h3 className="text-3xl font-bold text-neutral-900 mb-8">O que está incluído</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {packageData.includes.map((item, index) => (
+                  {packageData.includes && packageData.includes.map((item, index) => (
                     <div 
                       key={index}
                       className="flex items-center bg-white p-6 rounded-xl shadow-md border border-neutral-100 hover:shadow-lg transition-all duration-300"
@@ -233,9 +264,86 @@ const PackageDetail = () => {
                 </div>
               </div>
 
+              {/* Package Details */}
+              <div className="transition-all duration-1000">
+                <h3 className="text-3xl font-bold text-neutral-900 mb-8">Informações do Pacote</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
+                    <div className="flex items-center mb-4">
+                      <MapPin className="text-blue-600 mr-3" size={24} />
+                      <h4 className="text-xl font-bold text-blue-900">Destino</h4>
+                    </div>
+                    <p className="text-blue-800 font-medium">{packageData.destination || packageData.title}</p>
+                  </div>
+                  
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
+                    <div className="flex items-center mb-4">
+                      <Clock className="text-green-600 mr-3" size={24} />
+                      <h4 className="text-xl font-bold text-green-900">Duração</h4>
+                    </div>
+                    <p className="text-green-800 font-medium">{packageData.duration || 'A definir'}</p>
+                  </div>
+
+                  {packageData.groupSize && (
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200">
+                      <div className="flex items-center mb-4">
+                        <Users className="text-purple-600 mr-3" size={24} />
+                        <h4 className="text-xl font-bold text-purple-900">Grupo</h4>
+                      </div>
+                      <p className="text-purple-800 font-medium">{packageData.groupSize}</p>
+                    </div>
+                  )}
+
+                  {/* Dificuldade removida */}
+                </div>
+              </div>
+
+              {/* Itinerary */}
+              {packageData.itinerary && packageData.itinerary.length > 0 && (
+                <div className="transition-all duration-1000">
+                  <h3 className="text-3xl font-bold text-neutral-900 mb-8">Itinerário Detalhado</h3>
+                  <div className="space-y-6">
+                    {packageData.itinerary.map((day, index) => (
+                      <div key={index} className="bg-white p-6 rounded-xl shadow-md border border-neutral-100 hover:shadow-lg transition-all duration-300">
+                        <div className="flex items-start">
+                          <div className="bg-primary-600 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg mr-4 flex-shrink-0">
+                            {day.day || index + 1}
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-xl font-bold text-neutral-900 mb-2">
+                              Dia {day.day || index + 1}: {day.title}
+                            </h4>
+                            <p className="text-neutral-700 leading-relaxed">
+                              {day.description}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* What's NOT Included */}
+              {packageData.excludes && packageData.excludes.length > 0 && packageData.excludes[0] !== '' && (
+                <div className="transition-all duration-1000">
+                  <h3 className="text-3xl font-bold text-neutral-900 mb-8">O que NÃO está incluído</h3>
+                  <div className="bg-red-50 p-6 rounded-xl border border-red-100">
+                    <div className="space-y-3">
+                      {packageData.excludes.map((item, index) => (
+                        <div key={index} className="flex items-start">
+                          <Minus size={16} className="text-red-500 mr-3 mt-1 flex-shrink-0" />
+                          <span className="text-red-700">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Gallery */}
               {additionalImages.length > 1 && (
-                <div className={`transition-all duration-1000 ${isVisible.details ? 'animate-fade-in-up' : 'opacity-0 translate-y-10'}`} style={{animationDelay: '0.4s'}}>
+                <div className="transition-all duration-1000">
                   <h3 className="text-3xl font-bold text-neutral-900 mb-8">Galeria de Fotos</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {additionalImages.map((image, index) => (
@@ -266,44 +374,74 @@ const PackageDetail = () => {
                 {/* Price Card */}
                 <div className="bg-white p-8 rounded-3xl shadow-xl border border-neutral-100">
                   <div className="text-center mb-8">
-                    {packageData.originalPrice && (
+                    {packageData.originalPrice && packageData.promotionalPrice && (
                       <div className="text-neutral-400 line-through text-2xl mb-2">
-                        R$ {packageData.originalPrice.toLocaleString()}
+                        R$ {packageData.originalPrice?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) || '0'}
                       </div>
                     )}
                     <div className="text-4xl font-bold text-primary-600 mb-2">
-                      R$ {packageData.price.toLocaleString()}
+                      R$ {(packageData.promotionalPrice || packageData.price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </div>
                     <p className="text-neutral-600">por pessoa</p>
+                    {packageData.installments && packageData.installments > 1 && (
+                      <p className="text-primary-600 font-semibold mt-2">
+                        ou {packageData.installments}x de R$ {((packageData.promotionalPrice || packageData.price || 0) / packageData.installments).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-4 mb-8">
                     <div className="flex items-center justify-between py-3 border-b border-neutral-100">
                       <span className="text-neutral-600">Destino</span>
-                      <span className="font-semibold text-neutral-900">{packageData.destination}</span>
+                      <span className="font-semibold text-neutral-900">{packageData.destination || packageData.title}</span>
                     </div>
                     <div className="flex items-center justify-between py-3 border-b border-neutral-100">
                       <span className="text-neutral-600">Data de Saída</span>
                       <span className="font-semibold text-neutral-900">
-                        {new Date(packageData.departureDate).toLocaleDateString('pt-BR')}
+                        {packageData.departureDate ? 
+                          new Date(packageData.departureDate).toLocaleDateString('pt-BR') : 
+                          'A definir'
+                        }
                       </span>
                     </div>
                     <div className="flex items-center justify-between py-3 border-b border-neutral-100">
                       <span className="text-neutral-600">Data de Retorno</span>
                       <span className="font-semibold text-neutral-900">
-                        {new Date(packageData.returnDate).toLocaleDateString('pt-BR')}
+                        {packageData.returnDate ? 
+                          new Date(packageData.returnDate).toLocaleDateString('pt-BR') : 
+                          'A definir'
+                        }
                       </span>
                     </div>
                     <div className="flex items-center justify-between py-3 border-b border-neutral-100">
                       <span className="text-neutral-600">Duração</span>
-                      <span className="font-semibold text-neutral-900">{packageData.duration}</span>
+                      <span className="font-semibold text-neutral-900">{packageData.duration || '5 dias'}</span>
                     </div>
                     <div className="flex items-center justify-between py-3 border-b border-neutral-100">
                       <span className="text-neutral-600">Categoria</span>
                       <span className="font-semibold text-neutral-900">
-                        {packageData.price >= 2000 ? 'Internacional' : 'Nacional'}
+                        {(packageData.price || 0) >= 2000 ? 'Internacional' : 'Nacional'}
                       </span>
                     </div>
+                    {packageData.groupSize && (
+                      <div className="flex items-center justify-between py-3 border-b border-neutral-100">
+                        <span className="text-neutral-600">Tamanho do Grupo</span>
+                        <span className="font-semibold text-neutral-900">{packageData.groupSize}</span>
+                      </div>
+                    )}
+                    {/* Dificuldade removida */}
+                    {packageData.accommodation && (
+                      <div className="flex items-center justify-between py-3 border-b border-neutral-100">
+                        <span className="text-neutral-600">Acomodação</span>
+                        <span className="font-semibold text-neutral-900">{packageData.accommodation}</span>
+                      </div>
+                    )}
+                    {packageData.transport && (
+                      <div className="flex items-center justify-between py-3 border-b border-neutral-100">
+                        <span className="text-neutral-600">Transporte</span>
+                        <span className="font-semibold text-neutral-900">{packageData.transport}</span>
+                      </div>
+                    )}
                     <div className="flex items-center justify-between py-3">
                       <span className="text-neutral-600">Disponibilidade</span>
                       <span className="font-semibold text-green-600">Disponível</span>
@@ -375,13 +513,13 @@ const PackageDetail = () => {
                   <div className="relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-neutral-100">
                     <div className="relative overflow-hidden h-64">
                       <img 
-                        src={pkg.image} 
+                        src={pkg.images?.[0] || '/images/placeholder.jpg'} 
                         alt={pkg.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                       
-                      {pkg.originalPrice && pkg.price < pkg.originalPrice && (
+                      {pkg.originalPrice && pkg.price && pkg.price < pkg.originalPrice && (
                         <div className="absolute top-4 left-4 bg-accent-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
                           {Math.round(((pkg.originalPrice - pkg.price) / pkg.originalPrice) * 100)}% OFF
                         </div>
@@ -397,17 +535,17 @@ const PackageDetail = () => {
                       <h3 className="text-xl font-bold text-neutral-900 mb-2 group-hover:text-primary-600 transition-colors">
                         {pkg.title}
                       </h3>
-                      <p className="text-neutral-600 mb-4">{pkg.subtitle}</p>
+                      <p className="text-neutral-600 mb-4">{pkg.description || pkg.subtitle}</p>
                       
                       <div className="flex items-center justify-between">
                         <div>
                           {pkg.originalPrice && (
                             <span className="text-neutral-400 line-through text-sm">
-                              R$ {pkg.originalPrice.toLocaleString()}
+                              R$ {pkg.originalPrice?.toLocaleString() || '0'}
                             </span>
                           )}
                           <div className="text-2xl font-bold text-primary-600">
-                            R$ {pkg.price.toLocaleString()}
+                            R$ {pkg.price?.toLocaleString() || '0'}
                           </div>
                         </div>
                         <ChevronRight size={20} className="text-neutral-400 group-hover:text-primary-600 group-hover:translate-x-1 transition-all duration-300" />

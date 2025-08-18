@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Calendar, MessageCircle } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import Button from '../common/Button';
 import ReservationSystem from './ReservationSystem';
 
@@ -27,9 +27,10 @@ const ReservationButton = ({
         variant={variant}
         size={size}
         onClick={openReservation}
-        className={`flex items-center ${className}`}
+        className={`${className}`}
+        icon={icon ? Calendar : null}
+        iconPosition="left"
       >
-        {icon && <Calendar size={20} className="mr-2" />}
         {text}
       </Button>
 
