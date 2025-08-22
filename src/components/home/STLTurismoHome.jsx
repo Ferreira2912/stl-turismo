@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Phone, MessageCircle, MapPin, Star, Calendar, Users, Shield, Award, ChevronRight, Menu, X, Compass, Globe, Heart } from 'lucide-react';
-import { getFeaturedPackages } from '../../services/database';
+import { getPackages } from '../../services/database';
 import { useWhatsApp } from '../../hooks/useWhatsApp';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
@@ -26,8 +26,10 @@ const STLTurismoHome = () => {
   const loadFeaturedPackages = async () => {
     try {
       setPackagesLoading(true);
-      const data = await getFeaturedPackages();
-      setFeaturedPackages(data);
+      // Busca todos os pacotes e filtra os em destaque
+      const allPackages = await getPackages(100);
+      const featuredData = allPackages.filter(pkg => pkg.featured === true);
+      setFeaturedPackages(featuredData.slice(0, 6)); // Limita a 6 pacotes
     } catch (error) {
       console.error('Erro ao carregar pacotes em destaque:', error);
     } finally {

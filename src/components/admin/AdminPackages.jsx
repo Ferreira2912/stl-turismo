@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Star, Eye, Filter } from 'lucide-react';
+import { Plus, Edit, Trash2, Star, Eye, Filter, Copy } from 'lucide-react';
 import { getAllPackages, deletePackage } from '../../services/database';
 import AdminPackageForm from './AdminPackageForm';
 
@@ -8,6 +8,7 @@ const AdminPackages = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingPackage, setEditingPackage] = useState(null);
+  const [copyingPackage, setCopyingPackage] = useState(null);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -41,12 +42,31 @@ const AdminPackages = () => {
 
   const handleEdit = (pkg) => {
     setEditingPackage(pkg);
+    setCopyingPackage(null);
+    setShowForm(true);
+  };
+
+  const handleCopy = (pkg) => {
+    // Criar uma cópia do pacote removendo o ID e ajustando o título
+    const packageCopy = {
+      ...pkg,
+      title: `${pkg.title} - Cópia`,
+      featured: false, // Reset featured status for copy
+      active: false, // Start as inactive for review
+      createdAt: null, // Will be set when saved
+      updatedAt: null
+    };
+    delete packageCopy.id; // Remove ID para criar um novo pacote
+    
+    setCopyingPackage(packageCopy);
+    setEditingPackage(null);
     setShowForm(true);
   };
 
   const handleCloseForm = () => {
     setShowForm(false);
     setEditingPackage(null);
+    setCopyingPackage(null);
   };
 
   const handleFormSuccess = () => {
@@ -270,6 +290,13 @@ const AdminPackages = () => {
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
+                        onClick={() => handleCopy(pkg)}
+                        className="text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50"
+                        title="Criar Cópia"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                      <button
                         onClick={() => handleDelete(pkg.id)}
                         className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
                         title="Desativar"
@@ -299,8 +326,9 @@ const AdminPackages = () => {
       <AdminPackageForm
         isOpen={showForm}
         onClose={handleCloseForm}
-        packageData={editingPackage}
+        packageData={editingPackage || copyingPackage}
         onSuccess={handleFormSuccess}
+        isCopy={!!copyingPackage}
       />
     </div>
   );

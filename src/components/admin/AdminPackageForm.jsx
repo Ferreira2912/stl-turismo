@@ -1,36 +1,158 @@
-import React, { useState } from 'react';
-import { X, Upload, Image as ImageIcon, Trash2, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Upload, Image as ImageIcon, Trash2, Star, Copy } from 'lucide-react';
 import { addPackage, updatePackage } from '../../services/database';
 import { uploadMultipleImages, deletePackageImage } from '../../services/storage';
 
-const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) => {
+const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess, isCopy = false }) => {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState([]);
   const [imageFiles, setImageFiles] = useState([]);
   const [formData, setFormData] = useState({
-    title: packageData?.title || '',
-    destination: packageData?.destination || '',
-    description: packageData?.description || '',
-    duration: packageData?.duration || '',
-    price: packageData?.price || '',
-    originalPrice: packageData?.originalPrice || '',
-    includes: packageData?.includes || [''],
-    excludes: packageData?.excludes || [''],
-    itinerary: packageData?.itinerary || [{ day: 1, title: '', description: '' }],
-    featured: packageData?.featured || false,
-    category: packageData?.category || 'nacional',
-  // difficulty removido
-    groupSize: packageData?.groupSize || '',
-    accommodation: packageData?.accommodation || '',
-    transport: packageData?.transport || '',
-  images: packageData?.images || [],
-  departureDate: packageData?.departureDate || '',
-  returnDate: packageData?.returnDate || ''
-  ,transportMode: packageData?.transportMode || 'rodoviario'
-  ,promoEnabled: packageData?.promotionalPrice ? true : false,
-  promotionalPrice: packageData?.promotionalPrice || '',
-  installments: packageData?.installments || ''
+    title: '',
+    description: '',
+    duration: '',
+    price: '',
+    originalPrice: '',
+    includes: [''],
+    excludes: [''],
+    itinerary: [{ day: 1, title: '', description: '' }],
+    featured: false,
+    category: 'nacional',
+    accommodation: '',
+    transport: '',
+    images: [],
+    departureDate: '',
+    returnDate: '',
+    transportMode: 'rodoviario',
+    promoEnabled: false,
+    promotionalPrice: '',
+    paymentType: ['cartao'],
+    paymentOptions: {
+      cartao: { enabled: true, description: '' },
+      boleto: { enabled: false, description: '' },
+      pix: { enabled: false, description: '' }
+    },
+    installmentOptions: '',
+    importantInfo: [''],
+    departureLocations: [{ name: '', date: '', time: '' }]
   });
+
+  // Reset form data when packageData changes
+  useEffect(() => {
+    if (packageData) {
+      setFormData({
+        title: packageData.title || '',
+        description: packageData.description || '',
+        duration: packageData.duration || '',
+        price: packageData.price || '',
+        originalPrice: packageData.originalPrice || '',
+        includes: packageData.includes || [''],
+        excludes: packageData.excludes || [''],
+        itinerary: packageData.itinerary || [{ day: 1, title: '', description: '' }],
+        featured: packageData.featured || false,
+        category: packageData.category || 'nacional',
+        accommodation: packageData.accommodation || '',
+        transport: packageData.transport || '',
+        images: packageData.images || [],
+        departureDate: packageData.departureDate || '',
+        returnDate: packageData.returnDate || '',
+        transportMode: packageData.transportMode || 'rodoviario',
+        promoEnabled: packageData.promotionalPrice ? true : false,
+        promotionalPrice: packageData.promotionalPrice || '',
+        paymentType: Array.isArray(packageData.paymentType) 
+          ? packageData.paymentType 
+          : packageData.paymentType 
+            ? [packageData.paymentType] 
+            : ['cartao'],
+        paymentOptions: packageData.paymentOptions || {
+          cartao: { enabled: true, description: '' },
+          boleto: { enabled: false, description: '' },
+          pix: { enabled: false, description: '' }
+        },
+        installmentOptions: packageData.installmentOptions || '',
+        importantInfo: packageData.importantInfo || [''],
+        departureLocations: packageData.departureLocations || [{ name: '', date: '', time: '' }]
+      });
+      setImages(packageData.images || []);
+      setImageFiles([]);
+    } else {
+      // Reset to default values for new package
+      setFormData({
+        title: '',
+        description: '',
+        duration: '',
+        price: '',
+        originalPrice: '',
+        includes: [''],
+        excludes: [''],
+        itinerary: [{ day: 1, title: '', description: '' }],
+        featured: false,
+        category: 'nacional',
+        accommodation: '',
+        transport: '',
+        images: [],
+        departureDate: '',
+        returnDate: '',
+        transportMode: 'rodoviario',
+        promoEnabled: false,
+        promotionalPrice: '',
+        paymentType: ['cartao'],
+        paymentOptions: {
+          cartao: { enabled: true, description: '' },
+          boleto: { enabled: false, description: '' },
+          pix: { enabled: false, description: '' }
+        },
+        installmentOptions: '',
+        importantInfo: [''],
+        departureLocations: [{ name: '', date: '', time: '' }]
+      });
+      setImages([]);
+      setImageFiles([]);
+    }
+  }, [packageData]);
+
+  const handlePaymentTypeChange = (value, checked) => {
+    setFormData(prev => {
+      let newPaymentType = [...prev.paymentType];
+      const newPaymentOptions = { ...prev.paymentOptions };
+      
+      if (checked) {
+        if (!newPaymentType.includes(value)) {
+          newPaymentType.push(value);
+        }
+        newPaymentOptions[value].enabled = true;
+      } else {
+        newPaymentType = newPaymentType.filter(type => type !== value);
+        newPaymentOptions[value].enabled = false;
+        newPaymentOptions[value].description = ''; // Limpar descrição quando desmarcar
+      }
+      
+      // Garantir que sempre há pelo menos uma opção selecionada
+      if (newPaymentType.length === 0) {
+        newPaymentType = ['cartao'];
+        newPaymentOptions.cartao.enabled = true;
+      }
+      
+      return { 
+        ...prev, 
+        paymentType: newPaymentType,
+        paymentOptions: newPaymentOptions
+      };
+    });
+  };
+
+  const handlePaymentDescriptionChange = (paymentType, description) => {
+    setFormData(prev => ({
+      ...prev,
+      paymentOptions: {
+        ...prev.paymentOptions,
+        [paymentType]: {
+          ...prev.paymentOptions[paymentType],
+          description: description
+        }
+      }
+    }));
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -89,6 +211,29 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) =>
     }));
   };
 
+  const handleDepartureLocationChange = (index, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      departureLocations: prev.departureLocations.map((item, i) => 
+        i === index ? { ...item, [field]: value } : item
+      )
+    }));
+  };
+
+  const addDepartureLocation = () => {
+    setFormData(prev => ({
+      ...prev,
+      departureLocations: [...prev.departureLocations, { name: '', date: '', time: '' }]
+    }));
+  };
+
+  const removeDepartureLocation = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      departureLocations: prev.departureLocations.filter((_, i) => i !== index)
+    }));
+  };
+
   const calcularDuracao = (start, end) => {
     const inicio = new Date(start);
     const fim = new Date(end);
@@ -120,10 +265,10 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) =>
     setLoading(true);
 
     try {
-      let packageId = packageData?.id;
+      let packageId = packageData?.id && !isCopy ? packageData.id : null;
       let imageUrls = [...formData.images];
 
-      // Se é um novo pacote, criar primeiro para obter o ID
+      // Se é um novo pacote ou uma cópia, criar primeiro para obter o ID
       if (!packageId) {
         const tempPackage = await addPackage({
           ...formData,
@@ -143,15 +288,18 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) =>
         ...formData,
         images: imageUrls,
         price: parseFloat(formData.price),
-  originalPrice: formData.promoEnabled && formData.promotionalPrice ? parseFloat(formData.price) : null,
-  promotionalPrice: formData.promoEnabled && formData.promotionalPrice ? parseFloat(formData.promotionalPrice) : null,
-  installments: formData.installments ? parseInt(formData.installments) : null,
-        groupSize: formData.groupSize ? parseInt(formData.groupSize) : null,
-        transportMode: formData.transportMode
-      };
+        originalPrice: formData.promoEnabled && formData.promotionalPrice ? parseFloat(formData.price) : null,
+        promotionalPrice: formData.promoEnabled && formData.promotionalPrice ? parseFloat(formData.promotionalPrice) : null,
+        transportMode: formData.transportMode,
+        paymentType: formData.paymentType,
+        paymentOptions: formData.paymentOptions,
+        installmentOptions: formData.installmentOptions,
+        importantInfo: formData.importantInfo.filter(info => info.trim() !== ''),
+        departureLocations: formData.departureLocations.filter(loc => loc.name.trim() !== '')
+      };      
 
       // Atualizar ou criar o pacote com as imagens
-      if (packageData?.id) {
+      if (packageData?.id && !isCopy) {
         await updatePackage(packageData.id, finalPackageData);
       } else {
         await updatePackage(packageId, finalPackageData);
@@ -174,7 +322,7 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) =>
       <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">
-            {packageData ? 'Editar Pacote' : 'Novo Pacote'}
+            {isCopy ? 'Criar Cópia do Pacote' : packageData ? 'Editar Pacote' : 'Novo Pacote'}
           </h2>
           <button
             onClick={onClose}
@@ -183,6 +331,18 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) =>
             <X className="w-6 h-6" />
           </button>
         </div>
+
+        {isCopy && (
+          <div className="bg-blue-50 border border-blue-200 p-4 mx-6 rounded-lg">
+            <div className="flex items-center">
+              <Copy className="w-5 h-5 text-blue-600 mr-2" />
+              <p className="text-sm text-blue-700">
+                <strong>Criando cópia:</strong> Este formulário está preenchido com os dados do pacote original. 
+                Você pode modificar qualquer informação antes de salvar.
+              </p>
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Informações Básicas */}
@@ -203,22 +363,6 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) =>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Destino *
-              </label>
-              <input
-                type="text"
-                name="destination"
-                value={formData.destination}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-
-            {/* Campo de duração manual removido (calculada automaticamente abaixo) */}
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Categoria *
               </label>
               <select
@@ -236,10 +380,34 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) =>
                 <option value="romantico">Romântico</option>
               </select>
             </div>
+          </div>
 
+          {/* Modalidade de Transporte */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Modalidade de Transporte
+            </label>
+            <select
+              name="transportMode"
+              value={formData.transportMode}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="aereo">Aéreo</option>
+              <option value="rodoviario">Rodoviário</option>
+              <option value="misto">Misto</option>
+            </select>
+          </div>
+
+          {/* Campo de duração manual removido (calculada automaticamente abaixo) */}
+
+          {/* Investimento */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Investimento</h3>
+            
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Preço (R$) *
+                Valor (R$) *
               </label>
               <input
                 type="number"
@@ -250,6 +418,79 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) =>
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Formas de Pagamento * (selecione uma ou mais opções)
+              </label>
+              <div className="space-y-4">
+                {/* Cartão de Crédito */}
+                <div className="border border-gray-200 rounded-lg p-4">
+                  <label className="flex items-center mb-3">
+                    <input
+                      type="checkbox"
+                      checked={formData.paymentOptions.cartao.enabled}
+                      onChange={(e) => handlePaymentTypeChange('cartao', e.target.checked)}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded mr-2"
+                    />
+                    <span className="font-medium">Cartão de Crédito</span>
+                  </label>
+                  {formData.paymentOptions.cartao.enabled && (
+                    <input
+                      type="text"
+                      value={formData.paymentOptions.cartao.description}
+                      onChange={(e) => handlePaymentDescriptionChange('cartao', e.target.value)}
+                      placeholder="Ex: À vista ou em até 12x sem juros"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                  )}
+                </div>
+
+                {/* Boleto */}
+                <div className="border border-gray-200 rounded-lg p-4">
+                  <label className="flex items-center mb-3">
+                    <input
+                      type="checkbox"
+                      checked={formData.paymentOptions.boleto.enabled}
+                      onChange={(e) => handlePaymentTypeChange('boleto', e.target.checked)}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded mr-2"
+                    />
+                    <span className="font-medium">Boleto Bancário</span>
+                  </label>
+                  {formData.paymentOptions.boleto.enabled && (
+                    <input
+                      type="text"
+                      value={formData.paymentOptions.boleto.description}
+                      onChange={(e) => handlePaymentDescriptionChange('boleto', e.target.value)}
+                      placeholder="Ex: À vista com vencimento em 3 dias úteis"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                  )}
+                </div>
+
+                {/* PIX */}
+                <div className="border border-gray-200 rounded-lg p-4">
+                  <label className="flex items-center mb-3">
+                    <input
+                      type="checkbox"
+                      checked={formData.paymentOptions.pix.enabled}
+                      onChange={(e) => handlePaymentTypeChange('pix', e.target.checked)}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded mr-2"
+                    />
+                    <span className="font-medium">PIX</span>
+                  </label>
+                  {formData.paymentOptions.pix.enabled && (
+                    <input
+                      type="text"
+                      value={formData.paymentOptions.pix.description}
+                      onChange={(e) => handlePaymentDescriptionChange('pix', e.target.value)}
+                      placeholder="Ex: À vista com 5% de desconto, transferência instantânea"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                  )}
+                </div>
+              </div>
             </div>
 
             <div>
@@ -273,38 +514,11 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) =>
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
                 />
               )}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nº de Parcelas
-                </label>
-                <input
-                  type="number"
-                  name="installments"
-                  value={formData.installments || ''}
-                  onChange={handleInputChange}
-                  min="1"
-                  max="24"
-                  placeholder="Ex: 10"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
             </div>
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tamanho do Grupo
-              </label>
-              <input
-                type="number"
-                name="groupSize"
-                value={formData.groupSize}
-                onChange={handleInputChange}
-                placeholder="Máximo de pessoas"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Campo de dificuldade removido */}
+          {/* Datas */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Data de Saída
@@ -370,23 +584,6 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) =>
             />
           </div>
 
-          {/* Modalidade de Transporte */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Modalidade
-            </label>
-            <select
-              name="transportMode"
-              value={formData.transportMode}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="aereo">Aéreo</option>
-              <option value="rodoviario">Rodoviário</option>
-              <option value="misto">Misto</option>
-            </select>
-          </div>
-
           {/* Upload de Imagens */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -444,7 +641,7 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) =>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               O que está incluído
             </label>
-            {formData.includes.map((item, index) => (
+            {(formData.includes || []).map((item, index) => (
               <div key={index} className="flex gap-2 mb-2">
                 <input
                   type="text"
@@ -476,7 +673,7 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) =>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               O que não está incluído
             </label>
-            {formData.excludes.map((item, index) => (
+            {(formData.excludes || []).map((item, index) => (
               <div key={index} className="flex gap-2 mb-2">
                 <input
                   type="text"
@@ -503,12 +700,93 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess }) =>
             </button>
           </div>
 
+          {/* Informações Importantes */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Informações Importantes
+            </label>
+            {(formData.importantInfo || []).map((item, index) => (
+              <div key={index} className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  value={item}
+                  onChange={(e) => handleArrayChange('importantInfo', index, e.target.value)}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Ex: Documentos necessários, vacinas, etc."
+                />
+                <button
+                  type="button"
+                  onClick={() => removeArrayItem('importantInfo', index)}
+                  className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => addArrayItem('importantInfo')}
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              + Adicionar informação importante
+            </button>
+          </div>
+
+          {/* Locais de Embarque */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Locais de Embarque
+            </label>
+            {(formData.departureLocations || []).map((location, index) => (
+              <div key={index} className="border border-gray-200 rounded-lg p-4 mb-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium text-gray-900">Local {index + 1}</h4>
+                  <button
+                    type="button"
+                    onClick={() => removeDepartureLocation(index)}
+                    className="text-red-600 hover:bg-red-50 p-1 rounded"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <input
+                    type="text"
+                    value={location.name}
+                    onChange={(e) => handleDepartureLocationChange(index, 'name', e.target.value)}
+                    placeholder="Nome do local"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    type="date"
+                    value={location.date}
+                    onChange={(e) => handleDepartureLocationChange(index, 'date', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    type="time"
+                    value={location.time}
+                    onChange={(e) => handleDepartureLocationChange(index, 'time', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addDepartureLocation}
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              + Adicionar local de embarque
+            </button>
+          </div>
+
           {/* Itinerário */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Itinerário
             </label>
-            {formData.itinerary.map((day, index) => (
+            {(formData.itinerary || []).map((day, index) => (
               <div key={index} className="border border-gray-200 rounded-lg p-4 mb-4">
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="font-medium text-gray-900">Dia {day.day}</h4>

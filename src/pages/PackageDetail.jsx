@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  Calendar, MapPin, Star, Users, ChevronRight, ChevronLeft, 
+  Calendar, MapPin, Star, ChevronRight, ChevronLeft, 
   Phone, MessageCircle, Check, Info, Clock, DollarSign,
   Camera, Utensils, Bed, Car, Shield, Award, Minus,
   Plane, Bus
@@ -227,19 +227,6 @@ const PackageDetail = () => {
                 <p className="text-lg text-neutral-700 leading-relaxed mb-8">
                   {packageData.description}
                 </p>
-                
-                {/* Highlights */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {packageData.includes && packageData.includes.map((highlight, index) => (
-                    <div 
-                      key={index}
-                      className="flex items-start bg-primary-50 p-4 rounded-xl border border-primary-100"
-                    >
-                      <Check size={20} className="text-primary-600 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-neutral-700 font-medium">{highlight}</span>
-                    </div>
-                  ))}
-                </div>
               </div>
 
               {/* What's Included */}
@@ -264,18 +251,110 @@ const PackageDetail = () => {
                 </div>
               </div>
 
+              {/* Important Information */}
+              {packageData.importantInfo && packageData.importantInfo.length > 0 && packageData.importantInfo[0] !== '' && (
+                <div className="transition-all duration-1000">
+                  <h3 className="text-3xl font-bold text-neutral-900 mb-8">Informações Importantes</h3>
+                  <div className="bg-amber-50 p-6 rounded-xl border border-amber-100">
+                    <div className="space-y-3">
+                      {packageData.importantInfo.map((item, index) => (
+                        <div key={index} className="flex items-start">
+                          <Info size={16} className="text-amber-600 mr-3 mt-1 flex-shrink-0" />
+                          <span className="text-amber-800">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Investment */}
+                      {((packageData.paymentType && (Array.isArray(packageData.paymentType) ? packageData.paymentType.length > 0 : packageData.paymentType)) || packageData.paymentOptions || packageData.installmentOptions) && (
+                <div className="transition-all duration-1000">
+                  <h3 className="text-3xl font-bold text-neutral-900 mb-8">Investimento</h3>
+                  <div className="bg-green-50 p-6 rounded-xl border border-green-100">
+                    <div className="space-y-4">
+                      <div className="text-center">
+                        {packageData.originalPrice && packageData.promotionalPrice && (
+                          <div className="text-neutral-400 line-through text-xl mb-2">
+                            R$ {packageData.originalPrice?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) || '0'}
+                          </div>
+                        )}
+                        <div className="text-3xl font-bold text-green-700 mb-2">
+                          R$ {(packageData.promotionalPrice || packageData.price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </div>
+                        <p className="text-green-600">por pessoa</p>
+                      </div>
+                      
+                      {(packageData.paymentOptions || packageData.paymentType) && (
+                        <div className="space-y-3">
+                          <p className="text-green-700 font-medium text-center mb-4">Formas de Pagamento:</p>
+                          
+                          {/* Nova estrutura com paymentOptions */}
+                          {packageData.paymentOptions ? (
+                            <div className="space-y-2">
+                              {packageData.paymentOptions.cartao?.enabled && (
+                                <div className="bg-white p-3 rounded-lg border border-green-200">
+                                  <div className="font-medium text-green-800">Cartão de Crédito</div>
+                                  {packageData.paymentOptions.cartao.description && (
+                                    <div className="text-sm text-green-600 mt-1">{packageData.paymentOptions.cartao.description}</div>
+                                  )}
+                                </div>
+                              )}
+                              {packageData.paymentOptions.boleto?.enabled && (
+                                <div className="bg-white p-3 rounded-lg border border-green-200">
+                                  <div className="font-medium text-green-800">Boleto Bancário</div>
+                                  {packageData.paymentOptions.boleto.description && (
+                                    <div className="text-sm text-green-600 mt-1">{packageData.paymentOptions.boleto.description}</div>
+                                  )}
+                                </div>
+                              )}
+                              {packageData.paymentOptions.pix?.enabled && (
+                                <div className="bg-white p-3 rounded-lg border border-green-200">
+                                  <div className="font-medium text-green-800">PIX</div>
+                                  {packageData.paymentOptions.pix.description && (
+                                    <div className="text-sm text-green-600 mt-1">{packageData.paymentOptions.pix.description}</div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            /* Fallback para estrutura antiga */
+                            <div className="text-center">
+                              <p className="text-green-700 font-medium">
+                                Forma de pagamento: {
+                                  Array.isArray(packageData.paymentType) 
+                                    ? packageData.paymentType.map(type => {
+                                        switch(type) {
+                                          case 'avista': return 'À Vista';
+                                          case 'parcelado': return 'Parcelado';
+                                          case 'pix': return 'PIX';
+                                          case 'cartao': return 'Cartão';
+                                          case 'boleto': return 'Boleto';
+                                          default: return type;
+                                        }
+                                      }).join(', ')
+                                    : packageData.paymentType === 'avista' ? 'À Vista' :
+                                      packageData.paymentType === 'parcelado' ? 'Parcelado' :
+                                      'À Vista ou Parcelado'
+                                }
+                              </p>
+                              {packageData.installmentOptions && (
+                                <p className="text-green-600 mt-2">{packageData.installmentOptions}</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Package Details */}
               <div className="transition-all duration-1000">
                 <h3 className="text-3xl font-bold text-neutral-900 mb-8">Informações do Pacote</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
-                    <div className="flex items-center mb-4">
-                      <MapPin className="text-blue-600 mr-3" size={24} />
-                      <h4 className="text-xl font-bold text-blue-900">Destino</h4>
-                    </div>
-                    <p className="text-blue-800 font-medium">{packageData.destination || packageData.title}</p>
-                  </div>
-                  
                   <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
                     <div className="flex items-center mb-4">
                       <Clock className="text-green-600 mr-3" size={24} />
@@ -283,16 +362,6 @@ const PackageDetail = () => {
                     </div>
                     <p className="text-green-800 font-medium">{packageData.duration || 'A definir'}</p>
                   </div>
-
-                  {packageData.groupSize && (
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200">
-                      <div className="flex items-center mb-4">
-                        <Users className="text-purple-600 mr-3" size={24} />
-                        <h4 className="text-xl font-bold text-purple-900">Grupo</h4>
-                      </div>
-                      <p className="text-purple-800 font-medium">{packageData.groupSize}</p>
-                    </div>
-                  )}
 
                   {/* Dificuldade removida */}
                 </div>
@@ -383,18 +452,9 @@ const PackageDetail = () => {
                       R$ {(packageData.promotionalPrice || packageData.price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </div>
                     <p className="text-neutral-600">por pessoa</p>
-                    {packageData.installments && packageData.installments > 1 && (
-                      <p className="text-primary-600 font-semibold mt-2">
-                        ou {packageData.installments}x de R$ {((packageData.promotionalPrice || packageData.price || 0) / packageData.installments).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                      </p>
-                    )}
                   </div>
 
                   <div className="space-y-4 mb-8">
-                    <div className="flex items-center justify-between py-3 border-b border-neutral-100">
-                      <span className="text-neutral-600">Destino</span>
-                      <span className="font-semibold text-neutral-900">{packageData.destination || packageData.title}</span>
-                    </div>
                     <div className="flex items-center justify-between py-3 border-b border-neutral-100">
                       <span className="text-neutral-600">Data de Saída</span>
                       <span className="font-semibold text-neutral-900">
@@ -423,12 +483,28 @@ const PackageDetail = () => {
                         {(packageData.price || 0) >= 2000 ? 'Internacional' : 'Nacional'}
                       </span>
                     </div>
-                    {packageData.groupSize && (
-                      <div className="flex items-center justify-between py-3 border-b border-neutral-100">
-                        <span className="text-neutral-600">Tamanho do Grupo</span>
-                        <span className="font-semibold text-neutral-900">{packageData.groupSize}</span>
+
+                    {/* Departure Locations */}
+                    {packageData.departureLocations && packageData.departureLocations.length > 0 && packageData.departureLocations[0].name && (
+                      <div className="py-3 border-b border-neutral-100">
+                        <span className="text-neutral-600 block mb-2">Locais de Embarque</span>
+                        <div className="space-y-2">
+                          {packageData.departureLocations.map((location, index) => (
+                            <div key={index} className="text-sm">
+                              <div className="font-semibold text-neutral-900">{location.name}</div>
+                              {location.date && (
+                                <div className="text-neutral-600">
+                                  {new Date(location.date).toLocaleDateString('pt-BR')}
+                                  {location.time && ` às ${location.time}`}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
+
+
                     {/* Dificuldade removida */}
                     {packageData.accommodation && (
                       <div className="flex items-center justify-between py-3 border-b border-neutral-100">
@@ -437,15 +513,11 @@ const PackageDetail = () => {
                       </div>
                     )}
                     {packageData.transport && (
-                      <div className="flex items-center justify-between py-3 border-b border-neutral-100">
+                      <div className="flex items-center justify-between py-3">
                         <span className="text-neutral-600">Transporte</span>
                         <span className="font-semibold text-neutral-900">{packageData.transport}</span>
                       </div>
                     )}
-                    <div className="flex items-center justify-between py-3">
-                      <span className="text-neutral-600">Disponibilidade</span>
-                      <span className="font-semibold text-green-600">Disponível</span>
-                    </div>
                   </div>
 
                   <div className="space-y-4">

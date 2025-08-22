@@ -53,18 +53,34 @@ export const getAllPackages = async () => {
 
 export const getFeaturedPackages = async () => {
   try {
-    const q = query(
-      collection(db, 'packages'), 
-      where('featured', '==', true),
+    // Primeiro tenta a query otimizada (pode exigir índice composto no Firestore)
+    try {
+      const q = query(
+        collection(db, 'packages'), 
+        where('featured', '==', true),
+        where('active', '==', true),
+        orderBy('createdAt', 'desc'),
+        limit(6)
+      );
+      const querySnapshot = await getDocs(q);
+      const docs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      if (docs.length > 0) return docs;
+      console.warn('[getFeaturedPackages] Query principal retornou vazia. Aplicando fallback.');
+    } catch (innerErr) {
+      console.warn('[getFeaturedPackages] Falha na query principal (possível falta de índice). Aplicando fallback.', innerErr);
+    }
+
+    // Fallback: busca primeiros ativos e filtra em memória
+    const activeQ = query(
+      collection(db, 'packages'),
       where('active', '==', true),
       orderBy('createdAt', 'desc'),
-      limit(6)
+      limit(30)
     );
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const activeSnap = await getDocs(activeQ);
+    const allActive = activeSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const featured = allActive.filter(p => p.featured === true).slice(0, 6);
+    return featured;
   } catch (error) {
     console.error('Erro ao buscar pacotes em destaque:', error);
     return [];
