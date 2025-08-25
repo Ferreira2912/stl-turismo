@@ -112,15 +112,15 @@ _Formulário enviado pelo site_
     {
       icon: Phone,
       title: 'Telefone',
-      content: '(54) 99988-7766',
+      content: '+55 55 9942-1868',
       description: 'Atendimento de Segunda à Sexta',
       color: 'primary',
-      action: () => window.open('tel:+5554999887766')
+      action: () => window.open('tel:+5555999421868')
     },
     {
       icon: MessageCircle,
       title: 'WhatsApp',
-      content: '(54) 99988-7766',
+      content: '+55 55 9942-1868',
       description: 'Disponível 24/7',
       color: 'accent',
       action: () => openWhatsApp("Olá! Vim através do site e gostaria de mais informações.")
@@ -128,16 +128,16 @@ _Formulário enviado pelo site_
     {
       icon: Mail,
       title: 'Email',
-      content: 'contato@stlturismo.com.br',
+      content: 'stlturismo20@hotmail.com',
       description: 'Resposta em até 24h',
       color: 'primary',
-      action: () => window.open('mailto:contato@stlturismo.com.br')
+      action: () => window.open('mailto:stlturismo20@hotmail.com')
     },
     {
       icon: MapPin,
       title: 'Endereço',
-      content: 'Rua das Flores, 123 - Centro',
-      description: 'Caxias do Sul - RS',
+      content: 'Avenida Fortaleza 344',
+      description: 'Seberi - RS, 98380-000',
       color: 'accent',
       action: () => window.open('https://maps.google.com/?q=Caxias+do+Sul+RS')
     }
@@ -313,7 +313,7 @@ _Formulário enviado pelo site_
                         onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
-                        placeholder="(54) 99999-9999"
+                        placeholder="+55 55 9999-9999"
                       />
                     </div>
 
@@ -496,7 +496,7 @@ _Formulário enviado pelo site_
                   <Button
                     variant="outline"
                     size="lg"
-                    onClick={() => window.open('tel:+5554999887766')}
+                    onClick={() => window.open('tel:+5555999421868')}
                     className="w-full border-2 border-primary-600 text-primary-600 hover:bg-primary-50"
                   >
                     <Phone size={20} className="mr-2" />

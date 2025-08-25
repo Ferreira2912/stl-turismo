@@ -66,112 +66,77 @@ const Fleet = () => {
   const vehicles = [
     {
       id: 1,
-      name: 'Mercedes-Benz Sprinter',
+      name: 'Van Master Executiva',
       category: 'van',
-      capacity: '15-20 passageiros',
-      year: '2023',
-      image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&h=600&fit=crop',
+      capacity: '15 passageiros',
+      year: '2024',
+      image: '/images/fleet/van/1.jpeg',
       gallery: [
-        'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop'
+        '/images/fleet/van/1.jpeg',
+        '/images/fleet/van/2.jpeg',
+        '/images/fleet/van/3.jpeg',
+        '/images/fleet/van/4.jpeg'
       ],
-      features: ['Ar condicionado', 'Wi-Fi', 'TV/DVD', 'Poltronas reclináveis', 'Porta-malas amplo'],
-      description: 'Ideal para grupos médios com máximo conforto e segurança.',
-      price: 'A partir de R$ 300/dia',
+      features: ['Ar condicionado', 'Poltronas reclináveis', 'Sistema de áudio e vídeo', '15 lugares'],
+      description: 'Van master executiva com 15 lugares, ar condicionado, reclina os bancos, sistema de áudio e vídeo.',
+      price: 'A partir de R$ 400/dia',
       status: 'available'
     },
     {
       id: 2,
-      name: 'Ônibus Executivo 44 lugares',
-      category: 'bus',
-      capacity: '44 passageiros',
-      year: '2022',
-      image: 'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=800&h=600&fit=crop',
+      name: 'Micro Marcopolo Sênior',
+      category: 'micro',
+      capacity: '31 passageiros',
+      year: '2023',
+      image: '/images/fleet/micro/1.jpeg',
       gallery: [
-        'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop'
+        '/images/fleet/micro/1.jpeg',
+        '/images/fleet/micro/2.jpeg',
+        '/images/fleet/micro/3.jpeg',
+        '/images/fleet/micro/4.jpeg',
+        '/images/fleet/micro/5.jpeg'
       ],
-      features: ['Ar condicionado', 'Banheiro', 'Wi-Fi', 'TV/DVD', 'Poltronas semi-leito', 'Frigobar'],
-      description: 'Perfeito para excursões longas com todo o conforto necessário.',
-      price: 'A partir de R$ 800/dia',
+      features: ['Poltronas reclináveis', 'Ar condicionado', 'Calefação', 'Itens de segurança'],
+      description: 'Micro Marcopolo Sênior com capacidade para 31 passageiros com poltronas reclináveis, equipado com ar condicionado, calefação e com todos os itens de segurança.',
+      price: 'A partir de R$ 600/dia',
       status: 'available'
     },
     {
       id: 3,
-      name: 'Micro-ônibus Iveco',
-      category: 'micro',
-      capacity: '25-30 passageiros',
-      year: '2023',
-      image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&h=600&fit=crop',
+      name: 'Ônibus Double Decker G7',
+      category: 'bus',
+      capacity: '54 passageiros',
+      year: '2024',
+      image: '/images/fleet/g7/1.jpeg',
       gallery: [
-        'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop'
+        '/images/fleet/g7/1.jpeg',
+        '/images/fleet/g7/2.jpeg',
+        '/images/fleet/g7/3.jpeg',
+        '/images/fleet/g7/4.jpeg',
+        '/images/fleet/g7/5.jpeg'
       ],
-      features: ['Ar condicionado', 'Wi-Fi', 'Som ambiente', 'Poltronas acolchoadas', 'Porta-malas'],
-      description: 'Excelente para grupos médios e viagens de média distância.',
-      price: 'A partir de R$ 450/dia',
+      features: ['46 semi leito superior', '8 semi leito inferior', 'Sofá em "U" com mesa de jogos', 'Chopeira elétrica', 'USB em todas poltronas', 'Ar condicionado', 'Sistema áudio/vídeo', 'Frigobares', 'Internet STARLINK'],
+      description: 'Ônibus Double Decker (DD) Marcopolo G7 com capacidade para 54 passageiros sendo 46 lugares semi leito no piso superior e 8 lugares semi leito no piso inferior, com um grande diferencial, sofá em formato de "U" com mesa de jogos fixa instalada no veículo e chopeira elétrica!!! Além de mais acessórios e opções como carregador USB em todas as poltronas, ar condicionado, calefação, sistema de áudio e vídeo, frigobares e internet STARLINK a bordo.',
+      price: 'A partir de R$ 1.500/dia',
       status: 'available'
     },
     {
       id: 4,
-      name: 'Van Executiva Toyota',
-      category: 'van',
-      capacity: '12-15 passageiros',
-      year: '2024',
-      image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop',
-      gallery: [
-        'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop'
-      ],
-      features: ['Ar condicionado', 'Wi-Fi', 'TV', 'Poltronas de couro', 'Som premium'],
-      description: 'Máximo luxo para grupos pequenos e executivos.',
-      price: 'A partir de R$ 350/dia',
-      status: 'maintenance'
-    },
-    {
-      id: 5,
-      name: 'Ônibus Leito 40 lugares',
+      name: 'Ônibus Double Decker G7 Super Leito',
       category: 'bus',
       capacity: '40 passageiros',
-      year: '2021',
-      image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&h=600&fit=crop',
-      gallery: [
-        'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop'
-      ],
-      features: ['Ar condicionado', 'Banheiro', 'Wi-Fi', 'Poltronas leito', 'Frigobar', 'Cozinha'],
-      description: 'Ideal para viagens longas com pernoite e máximo conforto.',
-      price: 'A partir de R$ 1.200/dia',
-      status: 'available'
-    },
-    {
-      id: 6,
-      name: 'SUV Premium',
-      category: 'suv',
-      capacity: '7 passageiros',
       year: '2024',
-      image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop',
+      image: '/images/fleet/superleito/1.jpeg',
       gallery: [
-        'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=800&h=600&fit=crop'
+        '/images/fleet/superleito/1.jpeg',
+        '/images/fleet/superleito/2.jpeg',
+        '/images/fleet/superleito/3.jpeg',
+        '/images/fleet/superleito/4.jpeg',
+        '/images/fleet/superleito/5.jpeg'
       ],
-      features: ['Ar condicionado', 'GPS', 'Som premium', 'Bancos de couro', 'Tração 4x4'],
-      description: 'Perfeito para grupos pequenos e destinos off-road.',
-      price: 'A partir de R$ 250/dia',
+      features: ['31 leito total superior', '9 leito total inferior', 'Mesa de jogos opcional', 'Ar condicionado última geração', '5 telas LCD superior + 1 inferior', 'Toalete ecológico', '3 frigobares', 'Internet STARLINK', 'Suspensão inteligente'],
+      description: 'Ônibus Double Decker G7, Super Leito, com capacidade para 40 passageiros em poltronas Leito Total, sendo 31 lugares no piso superior e 9 no piso inferior, mesa de jogos opcional no piso inferior e superior, ideal para viagens de médias, longas e longuíssimas distâncias. Equipado com ar condicionado de última geração, sistema de áudio e vídeo inteligente 5 telas de lcd no piso superior e 1 no piso inferior, toalete ecológico, 3 frigobares, internet STARLINK, suspensão inteligente.',
+      price: 'A partir de R$ 2.000/dia',
       status: 'available'
     }
   ];
@@ -180,8 +145,7 @@ const Fleet = () => {
     { key: 'all', label: 'Todos os Veículos', icon: Car },
     { key: 'van', label: 'Vans', icon: Car },
     { key: 'micro', label: 'Micro-ônibus', icon: Car },
-    { key: 'bus', label: 'Ônibus', icon: Car },
-    { key: 'suv', label: 'SUVs', icon: Car }
+    { key: 'bus', label: 'Ônibus', icon: Car }
   ];
 
   const filteredVehicles = selectedCategory === 'all' 
@@ -221,7 +185,7 @@ const Fleet = () => {
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1920&h=1080&fit=crop"
+            src="./images/fleet/superleito/1.jpeg"
             alt="Nossa Frota"
             className="w-full h-full object-cover"
           />
@@ -264,8 +228,10 @@ const Fleet = () => {
               onClick={() => openWhatsApp("Olá! Gostaria de conhecer mais sobre a frota da STL Turismo.")}
               className="group bg-accent-500 hover:bg-accent-600 text-white border-none transform hover:scale-105 transition-all duration-300"
             >
-              <MessageCircle size={20} className="mr-2" />
-              Solicitar Cotação
+              <div className="flex items-center justify-center">
+                <MessageCircle size={20} className="mr-2" />
+                <span>Solicitar Cotação</span>
+              </div>
             </Button>
           </div>
         </div>
@@ -311,29 +277,15 @@ const Fleet = () => {
                 className={`group transition-all duration-700 ${isVisible.fleet ? 'animate-fade-in-up' : 'opacity-0 translate-y-10'}`}
                 style={{animationDelay: `${index * 0.1}s`}}
               >
-                <div className="relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-neutral-100">
+                <div className="relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-neutral-100 h-[650px] flex flex-col">
                   {/* Image */}
-                  <div className="relative overflow-hidden h-64">
+                  <div className="relative overflow-hidden h-80">
                     <img 
                       src={vehicle.image} 
                       alt={vehicle.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                    
-                    {/* Status Badge */}
-                    <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-sm font-bold shadow-lg ${
-                      vehicle.status === 'available' 
-                        ? 'bg-green-500 text-white' 
-                        : 'bg-yellow-500 text-white'
-                    }`}>
-                      {vehicle.status === 'available' ? 'Disponível' : 'Manutenção'}
-                    </div>
-                    
-                    {/* Year Badge */}
-                    <div className="absolute top-4 right-4 bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
-                      {vehicle.year}
-                    </div>
                     
                     {/* Capacity */}
                     <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm text-neutral-800 px-3 py-1 rounded-full text-sm font-semibold flex items-center">
@@ -343,35 +295,24 @@ const Fleet = () => {
                   </div>
                   
                   {/* Content */}
-                  <div className="p-8">
-                    <h3 className="text-2xl font-bold text-neutral-900 mb-2 group-hover:text-primary-600 transition-colors">
+                  <div className="p-8 flex-1 flex flex-col">
+                    <h3 className="text-2xl font-bold text-neutral-900 mb-6 group-hover:text-primary-600 transition-colors">
                       {vehicle.name}
                     </h3>
                     
-                    <p className="text-neutral-600 mb-6 leading-relaxed">
-                      {vehicle.description}
-                    </p>
-                    
                     {/* Features */}
-                    <div className="space-y-2 mb-6">
-                      {vehicle.features.slice(0, 3).map((feature, i) => (
+                    <div className="space-y-2 mb-8 flex-1">
+                      {vehicle.features.slice(0, 4).map((feature, i) => (
                         <div key={i} className="flex items-center text-sm text-neutral-700">
                           <CheckCircle size={16} className="text-green-500 mr-3 flex-shrink-0" />
                           <span>{feature}</span>
                         </div>
                       ))}
-                      {vehicle.features.length > 3 && (
+                      {vehicle.features.length > 4 && (
                         <div className="text-sm text-primary-600 font-medium">
-                          +{vehicle.features.length - 3} mais equipamentos
+                          +{vehicle.features.length - 4} mais equipamentos
                         </div>
                       )}
-                    </div>
-                    
-                    {/* Price */}
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="text-2xl font-bold text-primary-600">
-                        {vehicle.price}
-                      </div>
                     </div>
                     
                     {/* Action Buttons */}
@@ -381,9 +322,8 @@ const Fleet = () => {
                         size="lg"
                         onClick={() => openWhatsApp(`Olá! Gostaria de mais informações sobre o veículo "${vehicle.name}" da frota.`)}
                         className="w-full bg-primary-600 hover:bg-primary-700 transform hover:scale-105 transition-all duration-300"
-                        disabled={vehicle.status !== 'available'}
                       >
-                        {vehicle.status === 'available' ? 'Solicitar Informações' : 'Em Manutenção'}
+                        Solicitar Informações
                       </Button>
                       
                       <Button 
@@ -481,8 +421,10 @@ const Fleet = () => {
               onClick={() => openWhatsApp("Olá! Gostaria de solicitar uma cotação para aluguel de veículo da frota STL Turismo.")}
               className="group bg-accent-500 hover:bg-accent-600 text-white border-none transform hover:scale-105 transition-all duration-300"
             >
-              <MessageCircle size={20} className="mr-2" />
-              Solicitar Cotação
+              <div className="flex items-center justify-center">
+                <MessageCircle size={20} className="mr-2" />
+                <span>Solicitar Cotação</span>
+              </div>
             </Button>
             
             <Button 
@@ -503,7 +445,7 @@ const Fleet = () => {
           <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             {/* Gallery Section */}
             <div className="relative">
-              <div className="relative h-64 overflow-hidden rounded-t-3xl">
+              <div className="relative h-96 overflow-hidden rounded-t-3xl">
                 <img 
                   src={selectedVehicle.gallery[selectedImageIndex]} 
                   alt={`${selectedVehicle.name} - Imagem ${selectedImageIndex + 1}`}
@@ -579,16 +521,6 @@ const Fleet = () => {
                     <div className="flex justify-between">
                       <span className="text-neutral-600">Capacidade:</span>
                       <span className="font-semibold">{selectedVehicle.capacity}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-neutral-600">Ano:</span>
-                      <span className="font-semibold">{selectedVehicle.year}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-neutral-600">Status:</span>
-                      <span className={`font-semibold ${selectedVehicle.status === 'available' ? 'text-green-600' : 'text-yellow-600'}`}>
-                        {selectedVehicle.status === 'available' ? 'Disponível' : 'Manutenção'}
-                      </span>
                     </div>
                   </div>
                 </div>

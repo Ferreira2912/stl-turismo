@@ -19,7 +19,7 @@ const AdminSettings = () => {
     // Configurações Gerais
     siteName: 'STL Turismo',
     siteDescription: 'Sua agência de viagens dos sonhos',
-    contactEmail: 'contato@stlturismo.com',
+    contactEmail: 'stlturismo20@hotmail.com',
     contactPhone: '(11) 99999-9999',
     address: 'São Paulo, SP - Brasil',
     

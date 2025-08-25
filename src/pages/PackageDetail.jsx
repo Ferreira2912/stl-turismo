@@ -547,7 +547,7 @@ const PackageDetail = () => {
                   <div className="space-y-3">
                     <div className="flex items-center text-neutral-700">
                       <Phone size={18} className="mr-3 text-primary-600" />
-                      <span>(54) 99988-7766</span>
+                      <span>+55 55 9942-1868</span>
                     </div>
                     <div className="flex items-center text-neutral-700">
                       <MessageCircle size={18} className="mr-3 text-green-600" />

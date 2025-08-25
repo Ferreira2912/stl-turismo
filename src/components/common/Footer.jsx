@@ -34,7 +34,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center">
                 <Phone size={16} className="mr-2" />
-                <span>(54) 99988-7766</span>
+                <span>+55 55 9942-1868</span>
               </div>
               <div className="flex items-center">
                 <Mail size={16} className="mr-2" />
@@ -74,10 +74,10 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Conecte-se</h4>
             <div className="flex space-x-4 mb-4">
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a href={CONTACT_INFO.FACEBOOK} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
                 <Facebook size={24} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-pink-400 transition-colors">
+              <a href={CONTACT_INFO.INSTAGRAM} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-pink-400 transition-colors">
                 <Instagram size={24} />
               </a>
               <button onClick={() => openWhatsApp()} className="text-gray-400 hover:text-green-400 transition-colors">

@@ -8,10 +8,12 @@ export const COLORS = {
 };
 
 export const CONTACT_INFO = {
-  PHONE: '5554999887766', // Substitua pelo número real
-  EMAIL: 'contato@stlturismo.com.br',
-  ADDRESS: 'Alto Uruguai, Rio Grande do Sul',
-  WHATSAPP_URL: 'https://wa.me/5554999887766'
+  PHONE: '5555994218680', // +55 55 9942-1868
+  EMAIL: 'stlturismo20@hotmail.com',
+  ADDRESS: 'Avenida Fortaleza 344, Seberi, Rio Grande Do Sul, Brazil 98380-000',
+  WHATSAPP_URL: 'https://wa.me/5555999421868',
+  INSTAGRAM: 'https://www.instagram.com/stlturismo',
+  FACEBOOK: 'https://www.facebook.com/STLTurismo'
 };
 
 export const NAVIGATION_ITEMS = [
