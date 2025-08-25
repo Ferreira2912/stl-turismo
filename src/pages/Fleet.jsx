@@ -185,7 +185,7 @@ const Fleet = () => {
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
-            src="./images/fleet/superleito/1.jpeg"
+            src="./images/fleet/superleito/1.jpeg            firebase login --interactive"
             alt="Nossa Frota"
             className="w-full h-full object-cover"
           />

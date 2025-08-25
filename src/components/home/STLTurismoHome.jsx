@@ -37,7 +37,7 @@ const STLTurismoHome = () => {
 
   // Imagens dos destinos para o carrossel
   const heroImages = [
-    'https://images.unsplash.com/photo-1566737236500-c8ac43014a8b?w=1920&h=1080&fit=crop', // Serra Gaúcha
+    '../images/fleet/superleito/1.jpeg', // Serra Gaúcha
     'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=1920&h=1080&fit=crop', // Foz do Iguaçu
     'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1920&h=1080&fit=crop', // Florianópolis
     'https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=1920&h=1080&fit=crop', // Buenos Aires
