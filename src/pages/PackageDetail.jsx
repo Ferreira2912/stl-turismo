@@ -70,13 +70,8 @@ const PackageDetail = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Imagens adicionais para galeria (Firebase + fallback)
-  const additionalImages = [
-    ...(packageData?.images || []),
-    'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop'
-  ].filter(Boolean);
+  // Imagens da galeria (apenas do Firebase)
+  const additionalImages = packageData?.images || [];
 
   if (loading) {
     return (
@@ -113,7 +108,7 @@ const PackageDetail = () => {
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
-            src={additionalImages[selectedImageIndex] || (packageData.images && packageData.images[0]) || '/api/placeholder/1920/1080'}
+            src={additionalImages[selectedImageIndex] || (packageData.images && packageData.images[0]) || '/images/hero/default.jpg'}
             alt={packageData.title}
             className="w-full h-full object-cover"
           />
@@ -585,7 +580,7 @@ const PackageDetail = () => {
                   <div className="relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-neutral-100">
                     <div className="relative overflow-hidden h-64">
                       <img 
-                        src={pkg.images?.[0] || '/images/placeholder.jpg'} 
+                        src={pkg.images?.[0] || '/images/packages/default.jpg'} 
                         alt={pkg.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />

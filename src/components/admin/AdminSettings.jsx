@@ -4,13 +4,7 @@ import {
   Save, 
   Upload, 
   Bell, 
-  Lock, 
-  Globe, 
-  Mail,
-  Database,
-  Shield,
-  Palette,
-  Monitor
+  Globe
 } from 'lucide-react';
 
 const AdminSettings = () => {
@@ -87,12 +81,8 @@ const AdminSettings = () => {
 
   const tabs = [
     { id: 'general', label: 'Geral', icon: Settings },
-    { id: 'email', label: 'Email', icon: Mail },
     { id: 'notifications', label: 'Notificações', icon: Bell },
-    { id: 'seo', label: 'SEO', icon: Globe },
-    { id: 'appearance', label: 'Aparência', icon: Palette },
-    { id: 'security', label: 'Segurança', icon: Shield },
-    { id: 'database', label: 'Database', icon: Database }
+    { id: 'seo', label: 'SEO', icon: Globe }
   ];
 
   const renderTabContent = () => {
@@ -155,70 +145,6 @@ const AdminSettings = () => {
                 value={settings.siteDescription}
                 onChange={(e) => handleInputChange('general', 'siteDescription', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-          </div>
-        );
-
-      case 'email':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-medium text-gray-900">Configurações de Email</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  SMTP Host
-                </label>
-                <input
-                  type="text"
-                  value={settings.smtpHost}
-                  onChange={(e) => handleInputChange('email', 'smtpHost', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  SMTP Port
-                </label>
-                <input
-                  type="text"
-                  value={settings.smtpPort}
-                  onChange={(e) => handleInputChange('email', 'smtpPort', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  SMTP Usuário
-                </label>
-                <input
-                  type="text"
-                  value={settings.smtpUser}
-                  onChange={(e) => handleInputChange('email', 'smtpUser', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  SMTP Senha
-                </label>
-                <input
-                  type="password"
-                  value={settings.smtpPassword}
-                  onChange={(e) => handleInputChange('email', 'smtpPassword', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email de Envio
-              </label>
-              <input
-                type="email"
-                value={settings.emailFrom}
-                onChange={(e) => handleInputChange('email', 'emailFrom', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -307,178 +233,6 @@ const AdminSettings = () => {
                 placeholder="Separadas por vírgula"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
-            </div>
-          </div>
-        );
-
-      case 'appearance':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-medium text-gray-900">Configurações de Aparência</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Cor Primária
-                </label>
-                <input
-                  type="color"
-                  value={settings.primaryColor}
-                  onChange={(e) => handleInputChange('appearance', 'primaryColor', e.target.value)}
-                  className="w-full h-10 border border-gray-300 rounded-lg"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Cor Secundária
-                </label>
-                <input
-                  type="color"
-                  value={settings.secondaryColor}
-                  onChange={(e) => handleInputChange('appearance', 'secondaryColor', e.target.value)}
-                  className="w-full h-10 border border-gray-300 rounded-lg"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                URL do Logo
-              </label>
-              <input
-                type="url"
-                value={settings.logoUrl}
-                onChange={(e) => handleInputChange('appearance', 'logoUrl', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                URL do Favicon
-              </label>
-              <input
-                type="url"
-                value={settings.faviconUrl}
-                onChange={(e) => handleInputChange('appearance', 'faviconUrl', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-          </div>
-        );
-
-      case 'security':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-medium text-gray-900">Configurações de Segurança</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900">Verificação de Email Obrigatória</h4>
-                  <p className="text-sm text-gray-600">Usuários devem verificar email antes de fazer login</p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={settings.requireEmailVerification}
-                  onChange={(e) => handleInputChange('security', 'requireEmailVerification', e.target.checked)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900">Autenticação de Dois Fatores</h4>
-                  <p className="text-sm text-gray-600">Habilitar 2FA para administradores</p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={settings.enableTwoFactor}
-                  onChange={(e) => handleInputChange('security', 'enableTwoFactor', e.target.checked)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Timeout da Sessão (minutos)
-              </label>
-              <input
-                type="number"
-                value={settings.sessionTimeout}
-                onChange={(e) => handleInputChange('security', 'sessionTimeout', parseInt(e.target.value))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-          </div>
-        );
-
-      case 'database':
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-medium text-gray-900">Configurações do Firebase</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  API Key
-                </label>
-                <input
-                  type="text"
-                  value={settings.firebaseConfig.apiKey}
-                  onChange={(e) => handleInputChange('firebaseConfig', 'apiKey', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Auth Domain
-                </label>
-                <input
-                  type="text"
-                  value={settings.firebaseConfig.authDomain}
-                  onChange={(e) => handleInputChange('firebaseConfig', 'authDomain', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Project ID
-                </label>
-                <input
-                  type="text"
-                  value={settings.firebaseConfig.projectId}
-                  onChange={(e) => handleInputChange('firebaseConfig', 'projectId', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Storage Bucket
-                </label>
-                <input
-                  type="text"
-                  value={settings.firebaseConfig.storageBucket}
-                  onChange={(e) => handleInputChange('firebaseConfig', 'storageBucket', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Messaging Sender ID
-                </label>
-                <input
-                  type="text"
-                  value={settings.firebaseConfig.messagingSenderId}
-                  onChange={(e) => handleInputChange('firebaseConfig', 'messagingSenderId', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  App ID
-                </label>
-                <input
-                  type="text"
-                  value={settings.firebaseConfig.appId}
-                  onChange={(e) => handleInputChange('firebaseConfig', 'appId', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
             </div>
           </div>
         );

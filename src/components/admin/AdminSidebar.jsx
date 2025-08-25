@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { 
   LayoutDashboard, 
   Package, 
-  Calendar, 
-  MessageSquare,
   Settings,
   LogOut,
   Menu,
@@ -19,8 +17,6 @@ const AdminSidebar = ({ activeSection, setActiveSection }) => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'packages', label: 'Pacotes', icon: Package },
-    { id: 'reservations', label: 'Reservas', icon: Calendar },
-    { id: 'leads', label: 'Leads', icon: MessageSquare },
     { id: 'settings', label: 'Configurações', icon: Settings },
   ];
 

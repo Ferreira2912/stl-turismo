@@ -3,7 +3,6 @@ import { useAuthContext } from '../context/AuthContext';
 import AdminSidebar from '../components/admin/AdminSidebar';
 import AdminDashboard from '../components/admin/AdminDashboard';
 import AdminPackages from '../components/admin/AdminPackages';
-import AdminReservations from '../components/admin/AdminReservations';
 import AdminSettings from '../components/admin/AdminSettings';
 
 const AdminPanel = () => {
@@ -35,10 +34,6 @@ const AdminPanel = () => {
         return <AdminDashboard />;
       case 'packages':
         return <AdminPackages />;
-      case 'reservations':
-        return <AdminReservations />;
-      case 'leads':
-        return <AdminReservations />; // Usando o mesmo componente para leads
       case 'settings':
         return <AdminSettings />;
       default:
