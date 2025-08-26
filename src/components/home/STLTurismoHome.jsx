@@ -27,11 +27,11 @@ const STLTurismoHome = () => {
     try {
       setPackagesLoading(true);
       const data = await getFeaturedPackages();
-      // Ordenar por data de criação (mais recente primeiro)
+      // Ordenar por data do pacote (mais próximo primeiro)
       const sortedData = data.sort((a, b) => {
-        const aDate = a.createdAt ? new Date(a.createdAt.seconds * 1000) : new Date(0);
-        const bDate = b.createdAt ? new Date(b.createdAt.seconds * 1000) : new Date(0);
-        return bDate - aDate;
+        const aDate = a.date ? new Date(a.date) : new Date('9999-12-31');
+        const bDate = b.date ? new Date(b.date) : new Date('9999-12-31');
+        return aDate - bDate;
       });
       setFeaturedPackages(sortedData);
     } catch (error) {
