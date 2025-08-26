@@ -93,7 +93,7 @@ const Packages = () => {
       if (sortBy === 'date') {
         const aDate = a.date ? new Date(a.date) : new Date('9999-12-31');
         const bDate = b.date ? new Date(b.date) : new Date('9999-12-31');
-        return aDate - bDate; // Ordem crescente (mais próximo primeiro)
+        return bDate - aDate; // Ordem crescente (mais próximo primeiro)
       }
       if (sortBy === 'price') {
         const aPrice = a.promotionalPrice || a.price || 0;
