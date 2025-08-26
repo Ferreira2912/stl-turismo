@@ -68,7 +68,7 @@ const Packages = () => {
     featured: packages.filter(p => p.featured).length,
     national: packages.filter(p => p.category === 'nacional').length,
     international: packages.filter(p => p.category === 'internacional').length,
-    maritimo: packages.filter(p => p.transportMode === 'maritimo').length,
+    maritimo: packages.filter(p => p.transportMode === 'maritimo' || p.transportMode === 'aereo' || p.transportMode === 'misto').length,
     rodoviario: packages.filter(p => p.transportMode === 'rodoviario').length
   };
 
@@ -78,7 +78,7 @@ const Packages = () => {
       if (filter === 'featured') return pkg.featured;
       if (filter === 'national') return pkg.category === 'nacional';
       if (filter === 'international') return pkg.category === 'internacional';
-      if (filter === 'maritimo') return pkg.transportMode === 'maritimo';
+      if (filter === 'maritimo') return pkg.transportMode === 'maritimo' || pkg.transportMode === 'aereo' || pkg.transportMode === 'misto';
       if (filter === 'rodoviario') return pkg.transportMode === 'rodoviario';
       return true;
     })
@@ -279,11 +279,13 @@ const Packages = () => {
                         {/* Transport Mode Badge */}
                         {pkg.transportMode && (
                           <div className={`absolute top-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-semibold shadow-md flex items-center gap-1
-                            ${pkg.transportMode === 'maritimo' ? 'bg-blue-600 text-white' : pkg.transportMode === 'rodoviario' ? 'bg-emerald-600 text-white' : 'bg-purple-600 text-white'}`}
+                            ${(pkg.transportMode === 'maritimo' || pkg.transportMode === 'aereo' || pkg.transportMode === 'misto') ? 'bg-blue-600 text-white' : pkg.transportMode === 'rodoviario' ? 'bg-emerald-600 text-white' : 'bg-purple-600 text-white'}`}
                           >
-                            {pkg.transportMode === 'maritimo' && <Ship size={12} />}
+                            {(pkg.transportMode === 'maritimo' || pkg.transportMode === 'aereo' || pkg.transportMode === 'misto') && <Ship size={12} />}
                             {pkg.transportMode === 'rodoviario' && <Bus size={12} />}
-                            <span className="capitalize">{pkg.transportMode}</span>
+                            <span className="capitalize">
+                              {pkg.transportMode === 'aereo' || pkg.transportMode === 'misto' ? 'Marítimo' : pkg.transportMode}
+                            </span>
                           </div>
                         )}
 
