@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, Star, Users, ChevronRight, Filter, Search, DollarSign, Clock, Plane, Bus } from 'lucide-react';
+import { Calendar, MapPin, Star, Users, ChevronRight, Filter, Search, DollarSign, Clock, Plane, Bus, Ship } from 'lucide-react';
 import { getPackages } from '../services/database';
 import { useWhatsApp } from '../hooks/useWhatsApp';
 import { useNavigation } from '../hooks/useNavigation';
@@ -68,9 +68,8 @@ const Packages = () => {
     featured: packages.filter(p => p.featured).length,
     national: packages.filter(p => p.category === 'nacional').length,
     international: packages.filter(p => p.category === 'internacional').length,
-    aereo: packages.filter(p => p.transportMode === 'aereo').length,
-    rodoviario: packages.filter(p => p.transportMode === 'rodoviario').length,
-    misto: packages.filter(p => p.transportMode === 'misto').length
+    maritimo: packages.filter(p => p.transportMode === 'maritimo').length,
+    rodoviario: packages.filter(p => p.transportMode === 'rodoviario').length
   };
 
   // Filtros e busca
@@ -79,9 +78,8 @@ const Packages = () => {
       if (filter === 'featured') return pkg.featured;
       if (filter === 'national') return pkg.category === 'nacional';
       if (filter === 'international') return pkg.category === 'internacional';
-      if (filter === 'aereo') return pkg.transportMode === 'aereo';
+      if (filter === 'maritimo') return pkg.transportMode === 'maritimo';
       if (filter === 'rodoviario') return pkg.transportMode === 'rodoviario';
-      if (filter === 'misto') return pkg.transportMode === 'misto';
       return true;
     })
     .filter(pkg => 
@@ -186,9 +184,8 @@ const Packages = () => {
                   { key: 'featured', label: 'Destaques', icon: Star },
                   { key: 'national', label: 'Nacional', icon: MapPin },
                   { key: 'international', label: 'Internacional', icon: MapPin },
-                  { key: 'aereo', label: 'Aéreo', icon: Plane },
-                  { key: 'rodoviario', label: 'Rodoviário', icon: Bus },
-                  { key: 'misto', label: 'Misto', icon: Plane }
+                  { key: 'maritimo', label: 'Marítimo', icon: Ship },
+                  { key: 'rodoviario', label: 'Rodoviário', icon: Bus }
                 ].map(({ key, label, icon: Icon }) => {
                   const active = filter === key;
                   return (
@@ -282,11 +279,10 @@ const Packages = () => {
                         {/* Transport Mode Badge */}
                         {pkg.transportMode && (
                           <div className={`absolute top-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-semibold shadow-md flex items-center gap-1
-                            ${pkg.transportMode === 'aereo' ? 'bg-blue-600 text-white' : pkg.transportMode === 'rodoviario' ? 'bg-emerald-600 text-white' : 'bg-purple-600 text-white'}`}
+                            ${pkg.transportMode === 'maritimo' ? 'bg-blue-600 text-white' : pkg.transportMode === 'rodoviario' ? 'bg-emerald-600 text-white' : 'bg-purple-600 text-white'}`}
                           >
-                            {pkg.transportMode === 'aereo' && <Plane size={12} />}
+                            {pkg.transportMode === 'maritimo' && <Ship size={12} />}
                             {pkg.transportMode === 'rodoviario' && <Bus size={12} />}
-                            {pkg.transportMode === 'misto' && (<><Plane size={12} />/<Bus size={12} /></>)}
                             <span className="capitalize">{pkg.transportMode}</span>
                           </div>
                         )}
