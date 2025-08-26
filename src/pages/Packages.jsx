@@ -91,34 +91,9 @@ const Packages = () => {
     )
     .sort((a, b) => {
       if (sortBy === 'date') {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Zerar horas para comparação apenas de data
-        
-        const aDate = a.date ? new Date(a.date) : new Date('1900-01-01');
-        const bDate = b.date ? new Date(b.date) : new Date('1900-01-01');
-        
-        aDate.setHours(0, 0, 0, 0);
-        bDate.setHours(0, 0, 0, 0);
-        
-        // Separar pacotes futuros e passados
-        const aIsFuture = aDate >= today;
-        const bIsFuture = bDate >= today;
-        
-        // Se ambos são futuros, mostrar o mais próximo primeiro
-        if (aIsFuture && bIsFuture) {
-          return aDate - bDate; // Crescente (mais próximo primeiro)
-        }
-        
-        // Se ambos são passados, mostrar o mais recente primeiro
-        if (!aIsFuture && !bIsFuture) {
-          return bDate - aDate; // Decrescente (mais recente primeiro)
-        }
-        
-        // Se um é futuro e outro passado, priorizar o futuro
-        if (aIsFuture && !bIsFuture) return -1;
-        if (bIsFuture && !aIsFuture) return 1;
-        
-        return 0;
+        const aDate = a.date ? new Date(a.date) : new Date('9999-12-31');
+        const bDate = b.date ? new Date(b.date) : new Date('9999-12-31');
+        return aDate - bDate; // Ordem crescente (mais próximo primeiro)
       }
       if (sortBy === 'price') {
         const aPrice = a.promotionalPrice || a.price || 0;

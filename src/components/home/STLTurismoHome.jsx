@@ -27,35 +27,11 @@ const STLTurismoHome = () => {
     try {
       setPackagesLoading(true);
       const data = await getFeaturedPackages();
-      // Ordenar por data do pacote (futuros mais próximos primeiro)
+      // Ordenar por data do pacote (ordem crescente - mais próximo primeiro)
       const sortedData = data.sort((a, b) => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        const aDate = a.date ? new Date(a.date) : new Date('1900-01-01');
-        const bDate = b.date ? new Date(b.date) : new Date('1900-01-01');
-        
-        aDate.setHours(0, 0, 0, 0);
-        bDate.setHours(0, 0, 0, 0);
-        
-        const aIsFuture = aDate >= today;
-        const bIsFuture = bDate >= today;
-        
-        // Se ambos são futuros, mostrar o mais próximo primeiro
-        if (aIsFuture && bIsFuture) {
-          return aDate - bDate;
-        }
-        
-        // Se ambos são passados, mostrar o mais recente primeiro
-        if (!aIsFuture && !bIsFuture) {
-          return bDate - aDate;
-        }
-        
-        // Priorizar pacotes futuros
-        if (aIsFuture && !bIsFuture) return -1;
-        if (bIsFuture && !aIsFuture) return 1;
-        
-        return 0;
+        const aDate = a.date ? new Date(a.date) : new Date('9999-12-31');
+        const bDate = b.date ? new Date(b.date) : new Date('9999-12-31');
+        return aDate - bDate;
       });
       setFeaturedPackages(sortedData);
     } catch (error) {
