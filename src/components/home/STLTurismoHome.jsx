@@ -27,7 +27,13 @@ const STLTurismoHome = () => {
     try {
       setPackagesLoading(true);
       const data = await getFeaturedPackages();
-      setFeaturedPackages(data);
+      // Ordenar por data de criação (mais recente primeiro)
+      const sortedData = data.sort((a, b) => {
+        const aDate = a.createdAt ? new Date(a.createdAt.seconds * 1000) : new Date(0);
+        const bDate = b.createdAt ? new Date(b.createdAt.seconds * 1000) : new Date(0);
+        return bDate - aDate;
+      });
+      setFeaturedPackages(sortedData);
     } catch (error) {
       console.error('Erro ao carregar pacotes em destaque:', error);
     } finally {
@@ -207,7 +213,7 @@ const STLTurismoHome = () => {
                 return (
                   <div 
                     key={pkg.id}
-                    className={`group transition-all duration-700 ${isVisible.packages ? 'animate-fade-in-up' : 'opacity-0 translate-y-10'}`}
+                    className={`group transition-all duration-700 md:${isVisible.packages ? 'animate-fade-in-up' : 'opacity-0 translate-y-10'}`}
                     style={{animationDelay: `${index * 0.15}s`}}
                   >
                     <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 border border-neutral-100 flex flex-col h-full">

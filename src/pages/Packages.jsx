@@ -21,7 +21,7 @@ const Packages = () => {
   const [isVisible, setIsVisible] = useState({});
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('price');
+  const [sortBy, setSortBy] = useState('date');
 
   useEffect(() => {
     loadPackages();
@@ -90,6 +90,11 @@ const Packages = () => {
       pkg.description?.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
+      if (sortBy === 'date') {
+        const aDate = a.createdAt ? new Date(a.createdAt.seconds * 1000) : new Date(0);
+        const bDate = b.createdAt ? new Date(b.createdAt.seconds * 1000) : new Date(0);
+        return bDate - aDate; // Mais recente primeiro
+      }
       if (sortBy === 'price') {
         const aPrice = a.promotionalPrice || a.price || 0;
         const bPrice = b.promotionalPrice || b.price || 0;
@@ -212,6 +217,7 @@ const Packages = () => {
               onChange={(e) => setSortBy(e.target.value)}
               className="px-3 py-2.5 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
             >
+              <option value="date">Data</option>
               <option value="price">Preço</option>
               <option value="name">Nome</option>
               <option value="duration">Duração</option>
@@ -239,7 +245,7 @@ const Packages = () => {
                 {filteredPackages.map((pkg, index) => (
                   <div 
                     key={pkg.id}
-                    className={`group transition-all duration-700 ${isVisible.packages ? 'animate-fade-in-up' : 'opacity-0 translate-y-10'}`}
+                    className={`group transition-all duration-700 md:${isVisible.packages ? 'animate-fade-in-up' : 'opacity-0 translate-y-10'}`}
                     style={{animationDelay: `${index * 0.1}s`}}
                   >
                     <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 border border-neutral-100 flex flex-col h-full">
