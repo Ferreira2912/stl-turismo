@@ -27,25 +27,35 @@ const STLTurismoHome = () => {
     try {
       setPackagesLoading(true);
       const data = await getFeaturedPackages();
-      // Ordenar por data do pacote (mais próximo de hoje primeiro)
+      // Ordenar por data do pacote (futuros mais próximos primeiro)
       const sortedData = data.sort((a, b) => {
         const today = new Date();
-        const aDate = a.date ? new Date(a.date) : new Date('9999-12-31');
-        const bDate = b.date ? new Date(b.date) : new Date('9999-12-31');
+        today.setHours(0, 0, 0, 0);
         
-        // Se ambos são futuros ou ambos passados, ordenar por data normal
-        if ((aDate >= today && bDate >= today) || (aDate < today && bDate < today)) {
-          return aDate - bDate; // Ordem crescente
+        const aDate = a.date ? new Date(a.date) : new Date('1900-01-01');
+        const bDate = b.date ? new Date(b.date) : new Date('1900-01-01');
+        
+        aDate.setHours(0, 0, 0, 0);
+        bDate.setHours(0, 0, 0, 0);
+        
+        const aIsFuture = aDate >= today;
+        const bIsFuture = bDate >= today;
+        
+        // Se ambos são futuros, mostrar o mais próximo primeiro
+        if (aIsFuture && bIsFuture) {
+          return aDate - bDate;
         }
         
-        // Se um é passado e outro futuro, priorizar o futuro
-        if (aDate >= today && bDate < today) return -1;
-        if (bDate >= today && aDate < today) return 1;
+        // Se ambos são passados, mostrar o mais recente primeiro
+        if (!aIsFuture && !bIsFuture) {
+          return bDate - aDate;
+        }
         
-        // Calcular diferença em relação a hoje para pegar o mais próximo
-        const aDiff = Math.abs(aDate - today);
-        const bDiff = Math.abs(bDate - today);
-        return aDiff - bDiff;
+        // Priorizar pacotes futuros
+        if (aIsFuture && !bIsFuture) return -1;
+        if (bIsFuture && !aIsFuture) return 1;
+        
+        return 0;
       });
       setFeaturedPackages(sortedData);
     } catch (error) {
