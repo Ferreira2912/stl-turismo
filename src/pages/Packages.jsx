@@ -91,9 +91,24 @@ const Packages = () => {
     )
     .sort((a, b) => {
       if (sortBy === 'date') {
+        const today = new Date();
         const aDate = a.date ? new Date(a.date) : new Date('9999-12-31');
         const bDate = b.date ? new Date(b.date) : new Date('9999-12-31');
-        return aDate - bDate; // Ordem crescente (mais próximo primeiro)
+        
+        // Calcular diferença em relação a hoje (em valor absoluto para pegar o mais próximo)
+        const aDiff = Math.abs(aDate - today);
+        const bDiff = Math.abs(bDate - today);
+        
+        // Se ambos são futuros ou ambos passados, ordenar por data normal
+        if ((aDate >= today && bDate >= today) || (aDate < today && bDate < today)) {
+          return aDate - bDate; // Ordem crescente
+        }
+        
+        // Se um é passado e outro futuro, priorizar o futuro
+        if (aDate >= today && bDate < today) return -1;
+        if (bDate >= today && aDate < today) return 1;
+        
+        return aDiff - bDiff; // Mais próximo de hoje primeiro
       }
       if (sortBy === 'price') {
         const aPrice = a.promotionalPrice || a.price || 0;
