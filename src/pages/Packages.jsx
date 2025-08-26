@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, Star, Users, ChevronRight, Filter, Search, DollarSign, Clock, Plane, Bus, Ship } from 'lucide-react';
+import { Calendar, MapPin, Star, Users, ChevronRight, Filter, Search, DollarSign, Clock, Plane, Bus, Ship, ArrowUpAZ, ArrowDownAZ } from 'lucide-react';
 import { getPackages } from '../services/database';
 import { useWhatsApp } from '../hooks/useWhatsApp';
 import { useNavigation } from '../hooks/useNavigation';
@@ -22,6 +22,7 @@ const Packages = () => {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('date');
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' | 'desc'
 
   useEffect(() => {
     loadPackages();
@@ -88,18 +89,19 @@ const Packages = () => {
       pkg.description?.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
+      const multiplier = sortOrder === 'asc' ? 1 : -1;
       if (sortBy === 'date') {
         const aDate = a.date ? new Date(a.date) : new Date('9999-12-31');
         const bDate = b.date ? new Date(b.date) : new Date('9999-12-31');
-        return aDate - bDate; // Ordem crescente (mais próximo primeiro)
+        return (aDate - bDate) * multiplier;
       }
       if (sortBy === 'price') {
         const aPrice = a.promotionalPrice || a.price || 0;
         const bPrice = b.promotionalPrice || b.price || 0;
-        return aPrice - bPrice;
+        return (aPrice - bPrice) * multiplier;
       }
-      if (sortBy === 'duration') return (a.duration || '').localeCompare(b.duration || '');
-      if (sortBy === 'name') return (a.title || '').localeCompare(b.title || '');
+      if (sortBy === 'duration') return ((a.duration || '').localeCompare(b.duration || '')) * multiplier;
+      if (sortBy === 'name') return ((a.title || '').localeCompare(b.title || '')) * multiplier;
       return 0;
     });
 
@@ -209,16 +211,27 @@ const Packages = () => {
             </div>
 
             {/* Sort */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2.5 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-            >
-              <option value="date">Data</option>
-              <option value="price">Preço</option>
-              <option value="name">Nome</option>
-              <option value="duration">Duração</option>
-            </select>
+            <div className="flex items-center gap-2">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-3 py-2.5 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+              >
+                <option value="date">Data</option>
+                <option value="price">Preço</option>
+                <option value="name">Nome</option>
+                <option value="duration">Duração</option>
+              </select>
+              <button
+                type="button"
+                onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                className="px-3 py-2.5 border border-neutral-300 rounded-lg hover:bg-neutral-100 transition text-sm flex items-center gap-2"
+                title={sortOrder === 'asc' ? 'Ordem crescente' : 'Ordem decrescente'}
+              >
+                {sortOrder === 'asc' ? <ArrowUpAZ size={16} /> : <ArrowDownAZ size={16} />}
+                <span className="hidden sm:inline">{sortOrder === 'asc' ? 'Crescente' : 'Decrescente'}</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>
