@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Star, Users, ChevronRight, Filter, Search, DollarSign, Clock, Plane, Bus, Ship, ArrowUpAZ, ArrowDownAZ } from 'lucide-react';
 import { getPackages } from '../services/database';
+import { getPackageStartDate } from '../utils/helpers';
 import { useWhatsApp } from '../hooks/useWhatsApp';
 import { useNavigation } from '../hooks/useNavigation';
 import Header from '../components/common/Header';
@@ -88,11 +89,14 @@ const Packages = () => {
       pkg.destination?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       pkg.description?.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .sort((a, b) => {
+  .sort((a, b) => {
       const multiplier = sortOrder === 'asc' ? 1 : -1;
       if (sortBy === 'date') {
-        const aDate = a.date ? new Date(a.date) : new Date('9999-12-31');
-        const bDate = b.date ? new Date(b.date) : new Date('9999-12-31');
+        const aDate = getPackageStartDate(a);
+        const bDate = getPackageStartDate(b);
+        if (!aDate && !bDate) return 0;
+        if (!aDate) return 1; // a sem data vai para o final
+        if (!bDate) return -1; // b sem data vai para o final
         return (aDate - bDate) * multiplier;
       }
       if (sortBy === 'price') {

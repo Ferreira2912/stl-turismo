@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Phone, MessageCircle, MapPin, Star, Calendar, Users, Shield, Award, ChevronRight, Menu, X, Compass, Globe, Heart } from 'lucide-react';
 import { getFeaturedPackages } from '../../services/database';
+import { getPackageStartDate } from '../../utils/helpers';
 import { useWhatsApp } from '../../hooks/useWhatsApp';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
@@ -27,10 +28,13 @@ const STLTurismoHome = () => {
     try {
       setPackagesLoading(true);
       const data = await getFeaturedPackages();
-      // Ordenar por data do pacote (ordem crescente - mais próximo primeiro)
+      // Ordenar por data de saída (ordem crescente - mais próximo primeiro)
       const sortedData = data.sort((a, b) => {
-        const aDate = a.date ? new Date(a.date) : new Date('9999-12-31');
-        const bDate = b.date ? new Date(b.date) : new Date('9999-12-31');
+        const aDate = getPackageStartDate(a);
+        const bDate = getPackageStartDate(b);
+        if (!aDate && !bDate) return 0;
+        if (!aDate) return 1; // sem data vai para o final
+        if (!bDate) return -1;
         return aDate - bDate;
       });
       setFeaturedPackages(sortedData);
