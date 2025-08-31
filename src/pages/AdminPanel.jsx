@@ -3,7 +3,9 @@ import { useAuthContext } from '../context/AuthContext';
 import AdminSidebar from '../components/admin/AdminSidebar';
 import AdminDashboard from '../components/admin/AdminDashboard';
 import AdminPackages from '../components/admin/AdminPackages';
-import AdminSettings from '../components/admin/AdminSettings';
+import AdminReservations from '../components/admin/AdminReservations';
+import AdminUsers from '../components/admin/AdminUsers';
+// AdminSettings removed as per requirement
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -34,8 +36,10 @@ const AdminPanel = () => {
         return <AdminDashboard />;
       case 'packages':
         return <AdminPackages />;
-      case 'settings':
-        return <AdminSettings />;
+      case 'reservations':
+        return <AdminReservations />;
+      case 'users':
+        return <AdminUsers />;
       default:
         return <AdminDashboard />;
     }

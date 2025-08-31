@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Star, Eye, Filter, Copy } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Filter, Copy } from 'lucide-react';
 import { getAllPackages, deletePackage } from '../../services/database';
 import AdminPackageForm from './AdminPackageForm';
 
@@ -14,6 +14,20 @@ const AdminPackages = () => {
 
   useEffect(() => {
     loadPackages();
+  }, []);
+
+  // Open create form when coming from dashboard quick action
+  useEffect(() => {
+    const hash = window.location.hash || '';
+    if (hash === '#packages-new') {
+      setShowForm(true);
+      // normalize hash so it doesn't reopen on re-render
+      setTimeout(() => {
+        if (window.location.hash !== '#packages') {
+          window.location.hash = '#packages';
+        }
+      }, 0);
+    }
   }, []);
 
   const loadPackages = async () => {
@@ -51,7 +65,6 @@ const AdminPackages = () => {
     const packageCopy = {
       ...pkg,
       title: `${pkg.title} - Cópia`,
-      featured: false, // Reset featured status for copy
       active: false, // Start as inactive for review
       createdAt: null, // Will be set when saved
       updatedAt: null
@@ -80,7 +93,6 @@ const AdminPackages = () => {
     if (filter === 'all') return matchesSearch;
     if (filter === 'active') return matchesSearch && pkg.active;
     if (filter === 'inactive') return matchesSearch && !pkg.active;
-    if (filter === 'featured') return matchesSearch && pkg.featured;
     
     return matchesSearch;
   });
@@ -132,14 +144,13 @@ const AdminPackages = () => {
               <option value="all">Todos</option>
               <option value="active">Ativos</option>
               <option value="inactive">Inativos</option>
-              <option value="featured">Em Destaque</option>
             </select>
           </div>
         </div>
       </div>
 
       {/* Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           <div className="flex items-center">
             <div className="p-3 bg-blue-100 rounded-full">
@@ -166,19 +177,7 @@ const AdminPackages = () => {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center">
-            <div className="p-3 bg-yellow-100 rounded-full">
-              <Star className="w-6 h-6 text-yellow-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Em Destaque</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {packages.filter(p => p.featured).length}
-              </p>
-            </div>
-          </div>
-        </div>
+        
 
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           <div className="flex items-center">
@@ -244,9 +243,7 @@ const AdminPackages = () => {
                           <div className="text-sm font-medium text-gray-900">
                             {pkg.title}
                           </div>
-                          {pkg.featured && (
-                            <Star className="ml-2 w-4 h-4 text-yellow-400 fill-current" />
-                          )}
+                          
                         </div>
                         <div className="text-sm text-gray-500">
                           {pkg.duration}

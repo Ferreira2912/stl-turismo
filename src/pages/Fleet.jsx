@@ -178,18 +178,18 @@ const Fleet = () => {
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
-      <Header />
+      <Header transparentOnTop />
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+  {/* Hero Section */}
+  <section className="relative min-h-[calc(100vh+80px)] flex items-center justify-center overflow-hidden -mt-20 pt-20">
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
-            src="./images/fleet/superleito/1.jpeg            firebase login --interactive"
+            src="/images/fleet/superleito/1.jpeg"
             alt="Nossa Frota"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-sky-900/70 via-sky-900/40 to-transparent"></div>
         </div>
 
         {/* Floating Elements */}

@@ -3,14 +3,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, MessageCircle, Search, ChevronDown } from 'lucide-react';
 import { NAVIGATION_ITEMS } from '../../utils/constants';
 import { useWhatsApp } from '../../hooks/useWhatsApp';
-import { useNavigation } from '../../hooks/useNavigation';
 
 const Header = ({ transparentOnTop = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const { openWhatsApp } = useWhatsApp();
-  const { getPageTitle } = useNavigation();
 
   // Detectar scroll para mudar aparência do header
   useEffect(() => {
@@ -31,7 +29,7 @@ const Header = ({ transparentOnTop = false }) => {
 
   return (
     <>
-    <header className={`fixed top-0 w-full z-50 border-b transition-all duration-300 ${
+  <header className={`fixed top-0 w-full z-[100] border-b transition-all duration-300 ${
       isTransparent
         ? 'bg-transparent border-transparent shadow-none'
         : isScrolled

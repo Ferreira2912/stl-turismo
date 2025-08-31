@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  Calendar, MapPin, Star, ChevronRight, ChevronLeft, 
+  Calendar, MapPin, ChevronRight, ChevronLeft, 
   Phone, MessageCircle, Check, Info, Clock, DollarSign,
   Camera, Utensils, Bed, Car, Shield, Award, Minus,
   Plane, Bus
@@ -23,7 +23,6 @@ const PackageDetail = () => {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const { openWhatsApp } = useWhatsApp();
-  const [isVisible, setIsVisible] = useState({});
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   useEffect(() => {
@@ -48,28 +47,7 @@ const PackageDetail = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          setIsVisible(prev => ({
-            ...prev,
-            [entry.target.id]: true
-          }));
-        }
-      });
-    }, observerOptions);
-
-    const elements = document.querySelectorAll('[data-animate]');
-    elements.forEach(el => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
+  // Animations observer removed (not used)
 
   // Imagens da galeria (apenas do Firebase)
   const additionalImages = packageData?.images || [];
@@ -112,10 +90,10 @@ const PackageDetail = () => {
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
-      <Header />
+      <Header transparentOnTop />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+  <section className="relative min-h-[calc(100vh+80px)] flex items-center justify-center overflow-hidden -mt-20 pt-20">
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
@@ -123,7 +101,7 @@ const PackageDetail = () => {
             alt={packageData.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-sky-900/70 via-sky-900/40 to-transparent"></div>
         </div>
 
         {/* Back Button */}
@@ -154,13 +132,6 @@ const PackageDetail = () => {
         {/* Content */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="animate-fade-in-up">
-            {packageData.featured && (
-              <div className="inline-flex items-center bg-accent-500 text-white px-4 py-2 rounded-full text-sm font-bold mb-6 shadow-lg">
-                <Star size={16} className="mr-2 fill-current" />
-                PACOTE EM DESTAQUE
-              </div>
-            )}
-            
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
               {packageData.title}
             </h1>
@@ -567,7 +538,7 @@ const PackageDetail = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {packages
-              .filter(pkg => pkg.id !== packageData.id && pkg.featured)
+              .filter(pkg => pkg.id !== packageData.id && pkg.active)
               .slice(0, 3)
               .map((pkg, index) => (
                 <div 

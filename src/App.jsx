@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import Breadcrumb from './components/common/Breadcrumb';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -20,54 +19,14 @@ function App() {
         <div className="App">
           <Routes>
             {/* Rotas Públicas */}
-            <Route path="/" element={
-              <>
-                <Breadcrumb />
-                <Home />
-              </>
-            } />
-            <Route path="/sobre" element={
-              <>
-                <Breadcrumb />
-                <About />
-              </>
-            } />
-            <Route path="/pacotes" element={
-              <>
-                <Breadcrumb />
-                <Packages />
-              </>
-            } />
-            <Route path="/packages/:id" element={
-              <>
-                <Breadcrumb />
-                <PackageDetail />
-              </>
-            } />
-            <Route path="/frota" element={
-              <>
-                <Breadcrumb />
-                <Fleet />
-              </>
-            } />
-            <Route path="/blog" element={
-              <>
-                <Breadcrumb />
-                <Blog />
-              </>
-            } />
-            <Route path="/promocoes" element={
-              <>
-                <Breadcrumb />
-                <Promotions />
-              </>
-            } />
-            <Route path="/contato" element={
-              <>
-                <Breadcrumb />
-                <Contact />
-              </>
-            } />
+            <Route path="/" element={<Home />} />
+            <Route path="/sobre" element={<About />} />
+            <Route path="/pacotes" element={<Packages />} />
+            <Route path="/packages/:id" element={<PackageDetail />} />
+            <Route path="/frota" element={<Fleet />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/promocoes" element={<Promotions />} />
+            <Route path="/contato" element={<Contact />} />
             
             {/* Rota Admin Protegida */}
             <Route path="/admin/*" element={

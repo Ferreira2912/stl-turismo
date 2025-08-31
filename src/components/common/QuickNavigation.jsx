@@ -8,7 +8,7 @@ const QuickNavigation = ({
   className = "" 
 }) => {
   return (
-    <div className={`flex justify-between items-center py-6 ${className}`}>
+  <div className={`flex justify-between items-center py-6 relative z-10 ${className}`}>
       <div className="flex-1">
         {prevPage && (
           <Link 

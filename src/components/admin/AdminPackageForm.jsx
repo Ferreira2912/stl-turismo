@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Upload, Image as ImageIcon, Trash2, Star, Copy } from 'lucide-react';
+import { X, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
 import { addPackage, updatePackage } from '../../services/database';
-import { uploadMultipleImages, deletePackageImage } from '../../services/storage';
+import { uploadMultipleImages } from '../../services/storage';
 
 const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess, isCopy = false }) => {
   const [loading, setLoading] = useState(false);
