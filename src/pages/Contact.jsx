@@ -136,10 +136,10 @@ _Formulário enviado pelo site_
     {
       icon: MapPin,
       title: 'Endereço',
-      content: 'Avenida Fortaleza 344',
-      description: 'Seberi - RS, 98380-000',
+  content: 'Av. Fortaleza, 344',
+  description: 'Centro - Seberi/RS, 98380-000',
       color: 'accent',
-      action: () => window.open('https://maps.google.com/?q=Caxias+do+Sul+RS')
+  action: () => window.open('https://www.google.com/maps/search/?api=1&query=Av.%20Fortaleza%2C%20344%20-%20Centro%2C%20Seberi%20-%20RS%2C%2098380-000', '_blank')
     }
   ];
 
@@ -428,11 +428,11 @@ _Formulário enviado pelo site_
               <div className="bg-neutral-100 rounded-3xl overflow-hidden shadow-lg">
                 <div className="h-80 relative">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3515.4687!2d-51.179!3d-29.1678!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjnCsDEwJzA0LjEiUyA1McKwMTAnNDQuNCJX!5e0!3m2!1spt-BR!2sbr!4v1"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3539.7547666090463!2d-53.40530922442682!3d-27.476893076315477!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94fb828fea7238c3%3A0x8b8bec8bdd22c5ed!2sAv.%20Fortaleza%2C%20344%20-%20Centro%2C%20Seberi%20-%20RS%2C%2098380-000!5e0!3m2!1spt-BR!2sbr!4v1756247530036!5m2!1spt-BR!2sbr"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
-                    allowFullScreen=""
+          allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                     title="Localização STL Turismo"
@@ -443,7 +443,7 @@ _Formulário enviado pelo site_
                       <MapPin size={20} className="text-primary-600 mr-2" />
                       <div>
                         <div className="font-semibold text-neutral-900 text-sm">STL Turismo</div>
-                        <div className="text-neutral-600 text-xs">Caxias do Sul - RS</div>
+            <div className="text-neutral-600 text-xs">Seberi - RS</div>
                       </div>
                     </div>
                   </div>

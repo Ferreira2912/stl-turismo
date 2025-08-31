@@ -16,7 +16,7 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess, isCo
     includes: [''],
     excludes: [''],
     itinerary: [{ day: 1, title: '', description: '' }],
-    featured: false,
+  // featured removed
     category: 'nacional',
     accommodation: '',
     transport: '',
@@ -49,7 +49,7 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess, isCo
         includes: packageData.includes || [''],
         excludes: packageData.excludes || [''],
         itinerary: packageData.itinerary || [{ day: 1, title: '', description: '' }],
-        featured: packageData.featured || false,
+  // featured removed
         category: packageData.category || 'nacional',
         accommodation: packageData.accommodation || '',
         transport: packageData.transport || '',
@@ -86,7 +86,7 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess, isCo
         includes: [''],
         excludes: [''],
         itinerary: [{ day: 1, title: '', description: '' }],
-        featured: false,
+  // featured removed
         category: 'nacional',
         accommodation: '',
         transport: '',
@@ -824,21 +824,7 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess, isCo
             </button>
           </div>
 
-          {/* Pacote em destaque */}
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="featured"
-              name="featured"
-              checked={formData.featured}
-              onChange={handleInputChange}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <label htmlFor="featured" className="ml-2 flex items-center text-sm text-gray-700">
-              <Star className="w-4 h-4 mr-1 text-yellow-400" />
-              Pacote em destaque
-            </label>
-          </div>
+          {/* Featured field removed */}
 
           {/* Botões */}
           <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">

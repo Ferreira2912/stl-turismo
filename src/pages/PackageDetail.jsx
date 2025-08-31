@@ -6,6 +6,7 @@ import {
   Camera, Utensils, Bed, Car, Shield, Award, Minus,
   Plane, Bus
 } from 'lucide-react';
+import { formatDate } from '../utils/helpers';
 import { getPackageById, getPackages } from '../services/database';
 import { useWhatsApp } from '../hooks/useWhatsApp';
 import Header from '../components/common/Header';
@@ -72,6 +73,16 @@ const PackageDetail = () => {
 
   // Imagens da galeria (apenas do Firebase)
   const additionalImages = packageData?.images || [];
+  const importantItems = Array.isArray(packageData?.importantInfo)
+    ? packageData.importantInfo.filter((i) => (i || '').trim() !== '')
+    : [];
+  const hasPaymentOptions = !!(
+    packageData?.paymentOptions && (
+      packageData.paymentOptions.cartao?.enabled ||
+      packageData.paymentOptions.boleto?.enabled ||
+      packageData.paymentOptions.pix?.enabled
+    )
+  );
 
   if (loading) {
     return (
@@ -224,9 +235,35 @@ const PackageDetail = () => {
                 </p>
               </div>
 
-              {/* What's Included */}
+              {/* Roteiro */}
+              {packageData.itinerary && packageData.itinerary.length > 0 && (
+                <div className="transition-all duration-1000">
+                  <h3 className="text-3xl font-bold text-neutral-900 mb-8">Roteiro</h3>
+                  <div className="space-y-6">
+                    {packageData.itinerary.map((day, index) => (
+                      <div key={index} className="bg-white p-6 rounded-xl shadow-md border border-neutral-100 hover:shadow-lg transition-all duration-300">
+                        <div className="flex items-start">
+                          <div className="bg-primary-600 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg mr-4 flex-shrink-0">
+                            {day.day || index + 1}
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-xl font-bold text-neutral-900 mb-2">
+                              Dia {day.day || index + 1}: {day.title}
+                            </h4>
+                            <p className="text-neutral-700 leading-relaxed">
+                              {day.description}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Itens Inclusos */}
               <div className="transition-all duration-1000">
-                <h3 className="text-3xl font-bold text-neutral-900 mb-8">O que está incluído</h3>
+                <h3 className="text-3xl font-bold text-neutral-900 mb-8">Itens Inclusos</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {packageData.includes && packageData.includes.map((item, index) => (
                     <div 
@@ -246,27 +283,10 @@ const PackageDetail = () => {
                 </div>
               </div>
 
-              {/* Important Information */}
-              {packageData.importantInfo && packageData.importantInfo.length > 0 && packageData.importantInfo[0] !== '' && (
+              {/* Formas de Pagamento */}
+              {((packageData.paymentType && (Array.isArray(packageData.paymentType) ? packageData.paymentType.length > 0 : packageData.paymentType)) || hasPaymentOptions || packageData.installmentOptions) && (
                 <div className="transition-all duration-1000">
-                  <h3 className="text-3xl font-bold text-neutral-900 mb-8">Informações Importantes</h3>
-                  <div className="bg-amber-50 p-6 rounded-xl border border-amber-100">
-                    <div className="space-y-3">
-                      {packageData.importantInfo.map((item, index) => (
-                        <div key={index} className="flex items-start">
-                          <Info size={16} className="text-amber-600 mr-3 mt-1 flex-shrink-0" />
-                          <span className="text-amber-800">{item}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Investment */}
-                      {((packageData.paymentType && (Array.isArray(packageData.paymentType) ? packageData.paymentType.length > 0 : packageData.paymentType)) || packageData.paymentOptions || packageData.installmentOptions) && (
-                <div className="transition-all duration-1000">
-                  <h3 className="text-3xl font-bold text-neutral-900 mb-8">Investimento</h3>
+                  <h3 className="text-3xl font-bold text-neutral-900 mb-8">Formas de Pagamento</h3>
                   <div className="bg-green-50 p-6 rounded-xl border border-green-100">
                     <div className="space-y-4">
                       <div className="text-center">
@@ -280,13 +300,10 @@ const PackageDetail = () => {
                         </div>
                         <p className="text-green-600">por pessoa</p>
                       </div>
-                      
                       {(packageData.paymentOptions || packageData.paymentType) && (
                         <div className="space-y-3">
-                          <p className="text-green-700 font-medium text-center mb-4">Formas de Pagamento:</p>
-                          
-                          {/* Nova estrutura com paymentOptions */}
-                          {packageData.paymentOptions ? (
+                          <p className="text-green-700 font-medium text-center mb-4">Opções disponíveis:</p>
+                          {hasPaymentOptions ? (
                             <div className="space-y-2">
                               {packageData.paymentOptions.cartao?.enabled && (
                                 <div className="bg-white p-3 rounded-lg border border-green-200">
@@ -314,7 +331,6 @@ const PackageDetail = () => {
                               )}
                             </div>
                           ) : (
-                            /* Fallback para estrutura antiga */
                             <div className="text-center">
                               <p className="text-green-700 font-medium">
                                 Forma de pagamento: {
@@ -346,49 +362,24 @@ const PackageDetail = () => {
                 </div>
               )}
 
-              {/* Package Details */}
-              <div className="transition-all duration-1000">
-                <h3 className="text-3xl font-bold text-neutral-900 mb-8">Informações do Pacote</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
-                    <div className="flex items-center mb-4">
-                      <Clock className="text-green-600 mr-3" size={24} />
-                      <h4 className="text-xl font-bold text-green-900">Duração</h4>
-                    </div>
-                    <p className="text-green-800 font-medium">{packageData.duration || 'A definir'}</p>
-                  </div>
-
-                  {/* Dificuldade removida */}
-                </div>
-              </div>
-
-              {/* Itinerary */}
-              {packageData.itinerary && packageData.itinerary.length > 0 && (
+              {/* Informações Importantes */}
+        {importantItems.length > 0 && (
                 <div className="transition-all duration-1000">
-                  <h3 className="text-3xl font-bold text-neutral-900 mb-8">Itinerário Detalhado</h3>
-                  <div className="space-y-6">
-                    {packageData.itinerary.map((day, index) => (
-                      <div key={index} className="bg-white p-6 rounded-xl shadow-md border border-neutral-100 hover:shadow-lg transition-all duration-300">
-                        <div className="flex items-start">
-                          <div className="bg-primary-600 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg mr-4 flex-shrink-0">
-                            {day.day || index + 1}
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="text-xl font-bold text-neutral-900 mb-2">
-                              Dia {day.day || index + 1}: {day.title}
-                            </h4>
-                            <p className="text-neutral-700 leading-relaxed">
-                              {day.description}
-                            </p>
-                          </div>
+                  <h3 className="text-3xl font-bold text-neutral-900 mb-8">Informações Importantes</h3>
+                  <div className="bg-amber-50 p-6 rounded-xl border border-amber-100">
+                    <div className="space-y-3">
+          {importantItems.map((item, index) => (
+                        <div key={index} className="flex items-start">
+                          <Info size={16} className="text-amber-600 mr-3 mt-1 flex-shrink-0" />
+                          <span className="text-amber-800">{item}</span>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* What's NOT Included */}
+              {/* O que NÃO está incluído */}
               {packageData.excludes && packageData.excludes.length > 0 && packageData.excludes[0] !== '' && (
                 <div className="transition-all duration-1000">
                   <h3 className="text-3xl font-bold text-neutral-900 mb-8">O que NÃO está incluído</h3>
@@ -405,7 +396,21 @@ const PackageDetail = () => {
                 </div>
               )}
 
-              {/* Gallery */}
+              {/* Informações do Pacote */}
+              <div className="transition-all duration-1000">
+                <h3 className="text-3xl font-bold text-neutral-900 mb-8">Informações do Pacote</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
+                    <div className="flex items-center mb-4">
+                      <Clock className="text-green-600 mr-3" size={24} />
+                      <h4 className="text-xl font-bold text-green-900">Duração</h4>
+                    </div>
+                    <p className="text-green-800 font-medium">{packageData.duration || 'A definir'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Galeria */}
               {additionalImages.length > 1 && (
                 <div className="transition-all duration-1000">
                   <h3 className="text-3xl font-bold text-neutral-900 mb-8">Galeria de Fotos</h3>
@@ -453,19 +458,13 @@ const PackageDetail = () => {
                     <div className="flex items-center justify-between py-3 border-b border-neutral-100">
                       <span className="text-neutral-600">Data de Saída</span>
                       <span className="font-semibold text-neutral-900">
-                        {packageData.departureDate ? 
-                          new Date(packageData.departureDate).toLocaleDateString('pt-BR') : 
-                          'A definir'
-                        }
+                        {packageData.departureDate ? formatDate(packageData.departureDate) : 'A definir'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between py-3 border-b border-neutral-100">
                       <span className="text-neutral-600">Data de Retorno</span>
                       <span className="font-semibold text-neutral-900">
-                        {packageData.returnDate ? 
-                          new Date(packageData.returnDate).toLocaleDateString('pt-BR') : 
-                          'A definir'
-                        }
+                        {packageData.returnDate ? formatDate(packageData.returnDate) : 'A definir'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between py-3 border-b border-neutral-100">

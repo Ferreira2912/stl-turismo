@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Star, Users, ChevronRight, Filter, Search, DollarSign, Clock, Plane, Bus, Ship, ArrowUpAZ, ArrowDownAZ } from 'lucide-react';
 import { getPackages } from '../services/database';
-import { getPackageStartDate } from '../utils/helpers';
+import { getPackageStartDate, formatDate } from '../utils/helpers';
 import { useWhatsApp } from '../hooks/useWhatsApp';
 import { useNavigation } from '../hooks/useNavigation';
 import Header from '../components/common/Header';
@@ -67,7 +67,7 @@ const Packages = () => {
   // Contagens para exibir nos filtros
   const counts = {
     all: packages.length,
-    featured: packages.filter(p => p.featured).length,
+  // featured removed
     national: packages.filter(p => p.category === 'nacional').length,
     international: packages.filter(p => p.category === 'internacional').length,
     maritimo: packages.filter(p => p.transportMode === 'maritimo' || p.transportMode === 'aereo' || p.transportMode === 'misto').length,
@@ -77,7 +77,7 @@ const Packages = () => {
   // Filtros e busca
   const filteredPackages = packages
     .filter(pkg => {
-      if (filter === 'featured') return pkg.featured;
+  // featured filter removed
       if (filter === 'national') return pkg.category === 'nacional';
       if (filter === 'international') return pkg.category === 'internacional';
       if (filter === 'maritimo') return pkg.transportMode === 'maritimo' || pkg.transportMode === 'aereo' || pkg.transportMode === 'misto';
@@ -187,7 +187,7 @@ const Packages = () => {
               <div className="inline-flex gap-2 min-w-full pr-4">
                 {[ 
                   { key: 'all', label: 'Todos', icon: MapPin },
-                  { key: 'featured', label: 'Destaques', icon: Star },
+                  // featured button removed
                   { key: 'national', label: 'Nacional', icon: MapPin },
                   { key: 'international', label: 'Internacional', icon: MapPin },
                   { key: 'maritimo', label: 'Marítimo', icon: Ship },
@@ -272,20 +272,7 @@ const Packages = () => {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                         
-                        {/* Discount Badge */}
-                        {pkg.originalPrice && pkg.promotionalPrice && pkg.promotionalPrice < pkg.originalPrice && (
-                          <div className="absolute top-4 left-4 bg-accent-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
-                            {Math.round(((pkg.originalPrice - pkg.promotionalPrice) / pkg.originalPrice) * 100)}% OFF
-                          </div>
-                        )}
-
-                        {/* Featured Badge */}
-                        {pkg.featured && (
-                          <div className="absolute top-4 right-4 bg-primary-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center">
-                            <Star size={12} className="mr-1 fill-current" />
-                            DESTAQUE
-                          </div>
-                        )}
+                        {/* Only duration and transport mode badges remain */}
                         
                         {/* Duration Badge */}
                         <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm text-neutral-800 px-3 py-1 rounded-full text-sm font-semibold flex items-center">
@@ -306,11 +293,7 @@ const Packages = () => {
                           </div>
                         )}
 
-                        {/* Destination Badge */}
-                        <div className="absolute bottom-4 right-4 bg-primary-600/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center">
-                          <MapPin size={14} className="mr-1" />
-                          {pkg.destination}
-                        </div>
+                        {/* Destination badge removed as requested */}
                       </div>
                       
                       {/* Content */}
@@ -322,7 +305,7 @@ const Packages = () => {
                           <div className="flex items-center text-sm text-neutral-500 mb-4">
                             <Calendar size={14} className="mr-2 text-primary-600" />
                             <span>
-                              {(pkg.departureDate ? new Date(pkg.departureDate).toLocaleDateString('pt-BR') : 'Data a definir')} - {(pkg.returnDate ? new Date(pkg.returnDate).toLocaleDateString('pt-BR') : 'Data a definir')}
+                              {(pkg.departureDate ? formatDate(pkg.departureDate) : 'Data a definir')} - {(pkg.returnDate ? formatDate(pkg.returnDate) : 'Data a definir')}
                             </span>
                           </div>
                         ) : (

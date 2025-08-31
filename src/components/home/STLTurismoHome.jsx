@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Star, Calendar, Shield, Award, Globe, Heart, MessageCircle, Bus, Ship } from 'lucide-react';
 import { getPackages } from '../../services/database';
-import { getPackageStartDate } from '../../utils/helpers';
+import { getPackageStartDate, formatDate } from '../../utils/helpers';
 import { useWhatsApp } from '../../hooks/useWhatsApp';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
@@ -17,6 +17,17 @@ const STLTurismoHome = () => {
   const { openWhatsApp } = useWhatsApp();
   const [isVisible, setIsVisible] = useState({});
   const navigate = useNavigate();
+  
+  // Hero slideshow
+  const heroImages = [
+    '/images/hero/1.jpeg',
+    '/images/hero/2.avif',
+    '/images/hero/3.jpg',
+    '/images/hero/4.jpg',
+    '/images/hero/5.jpg',
+    '/images/hero/6.jpg',
+  ];
+  const [heroIndex, setHeroIndex] = useState(0);
 
   useEffect(() => {
     loadFeaturedPackages();
@@ -28,7 +39,8 @@ const STLTurismoHome = () => {
       const data = await getPackages(100);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const upcomingSorted = data
+  // Show 6 closest upcoming packages by date, not relying on any 'featured' flag
+  const upcomingSorted = data
         .map((pkg) => ({ pkg, startDate: getPackageStartDate(pkg) }))
         .filter(({ startDate }) => startDate && startDate >= today)
         .sort((a, b) => a.startDate - b.startDate)
@@ -65,36 +77,49 @@ const STLTurismoHome = () => {
     return () => observer.disconnect();
   }, []);
 
+  // Cycle hero images with fade
+  useEffect(() => {
+    if (heroImages.length <= 1) return;
+    const id = setInterval(() => {
+      setHeroIndex((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+    return () => clearInterval(id);
+    // heroImages is a constant array defined above
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const testimonials = [
     {
-      name: 'Maria Silva',
-      age: '65 anos',
-      text: 'Viagem incrível para Gramado! Atendimento familiar e cuidadoso em todos os detalhes.',
-      rating: 5,
-      trip: 'Gramado - Família',
+      name: 'Nilo Jane Noetzold',
+      text: 'Viajar é muito bom\nCom essa empresa melhor ainda 🙏🏻',
+      rating: 5
     },
     {
-      name: 'João Santos',
-      age: '45 anos',
-      text: 'Excelente experiência em Foz do Iguaçu. Veículos novos e confortáveis, recomendo!',
-      rating: 5,
-      trip: 'Foz do Iguaçu - Casal',
+      name: 'Marlene Reis Braga',
+      text: 'Que passeio inesquecível, adoramos tudo muuiiito bommmm. Atenção e o cuidado com as pessoas que vocês têm não tem preço. Obrigaduuuuu!!!',
+      rating: 5
     },
   ];
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
-      <Header />
+      <Header transparentOnTop />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+  <section className="relative min-h-[calc(100vh+80px)] flex items-center justify-center overflow-hidden -mt-20 pt-20">
+        {/* Slideshow background */}
         <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&h=1080&fit=crop"
-            alt="Destinos de Viagem"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/50"></div>
+          {heroImages.map((src, i) => (
+            <img
+              key={i}
+              src={src}
+              alt="Destinos de Viagem"
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${i === heroIndex ? 'opacity-100' : 'opacity-0'}`}
+              loading={i === 0 ? 'eager' : 'lazy'}
+            />
+          ))}
+          {/* Fallback gradient overlay for readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-sky-900/70 via-sky-900/40 to-transparent"></div>
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="animate-fade-in-up">
@@ -102,12 +127,12 @@ const STLTurismoHome = () => {
               <img src="/stl.png" alt="STL Turismo" className="h-20 w-auto filter brightness-0 invert" />
             </div>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-8 leading-tight">
-              Pacotes em <span className="text-accent-300">Destaque</span>
+              Sua próxima <span className="text-sky-300">Aventura</span> começa agora
             </h1>
           </div>
           <div className="animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
             <p className="text-xl md:text-2xl text-white/90 mb-12 leading-relaxed max-w-3xl mx-auto">
-              Os 6 pacotes mais próximos por data, prontos para você viajar.
+              Descubra pacotes com saídas próximas, ofertas especiais e condições facilitadas. Reserve online ou pelo WhatsApp.
             </p>
           </div>
         </div>
@@ -138,21 +163,6 @@ const STLTurismoHome = () => {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
 
-                      {/* Discount Badge */}
-                      {pkg.originalPrice && pkg.promotionalPrice && pkg.promotionalPrice < pkg.originalPrice && (
-                        <div className="absolute top-4 left-4 bg-accent-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
-                          {Math.round(((pkg.originalPrice - pkg.promotionalPrice) / pkg.originalPrice) * 100)}% OFF
-                        </div>
-                      )}
-
-                      {/* Featured Badge */}
-                      {pkg.featured && (
-                        <div className="absolute top-4 right-4 bg-primary-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center">
-                          <Star size={12} className="mr-1 fill-current" />
-                          DESTAQUE
-                        </div>
-                      )}
-
                       {/* Duration Badge */}
                       <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm text-neutral-800 px-3 py-1 rounded-full text-sm font-semibold flex items-center">
                         <Calendar size={14} className="mr-1" />
@@ -179,11 +189,7 @@ const STLTurismoHome = () => {
                         </div>
                       )}
 
-                      {/* Destination Badge */}
-                      <div className="absolute bottom-4 right-4 bg-primary-600/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center">
-                        <MapPin size={14} className="mr-1" />
-                        {pkg.destination}
-                      </div>
+                      {/* Only duration and transport mode badges remain */}
                     </div>
 
                     {/* Content */}
@@ -193,8 +199,8 @@ const STLTurismoHome = () => {
                         <div className="flex items-center text-sm text-neutral-500 mb-4">
                           <Calendar size={14} className="mr-2 text-primary-600" />
                           <span>
-                            {(pkg.departureDate ? new Date(pkg.departureDate).toLocaleDateString('pt-BR') : 'Data a definir')} -
-                            {(pkg.returnDate ? ` ${new Date(pkg.returnDate).toLocaleDateString('pt-BR')}` : ' Data a definir')}
+                            {(pkg.departureDate ? formatDate(pkg.departureDate) : 'Data a definir')} -
+                            {(pkg.returnDate ? ` ${formatDate(pkg.returnDate)}` : ' Data a definir')}
                           </span>
                         </div>
                       ) : (
@@ -279,7 +285,7 @@ const STLTurismoHome = () => {
       </section>
 
       {/* Features */}
-      <section id="features" data-animate className="py-32 bg-neutral-50 relative">
+  <section id="features" data-animate className="py-32 bg-sky-50 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={`text-center mb-20 transition-all duration-1000 ${isVisible.features ? 'animate-fade-in-up' : 'opacity-0 translate-y-10'}`}>
             <div className="flex justify-center mb-6">

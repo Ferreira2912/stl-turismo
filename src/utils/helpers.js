@@ -5,8 +5,40 @@ export const formatCurrency = (value) => {
   }).format(value);
 };
 
+// Parse various date shapes to a Date object, preserving date-only values in local timezone
+export const parseDateLocal = (value) => {
+  if (!value) return null;
+  // Firestore Timestamp-like
+  if (typeof value === 'object' && value !== null) {
+    if (typeof value.toDate === 'function') {
+      const d = value.toDate();
+      return isNaN(d) ? null : d;
+    }
+    if ('seconds' in value) {
+      const d = new Date(value.seconds * 1000);
+      return isNaN(d) ? null : d;
+    }
+  }
+  if (typeof value === 'string') {
+    // Handle date-only strings as local dates to avoid UTC shift (e.g., 2025-03-06)
+    const m = /^\d{4}-\d{2}-\d{2}$/.exec(value.trim());
+    if (m) {
+      const [y, mo, d] = value.split('-').map((v) => parseInt(v, 10));
+      const local = new Date(y, mo - 1, d, 0, 0, 0, 0);
+      return isNaN(local) ? null : local;
+    }
+    // Otherwise, let Date parse (ISO with time)
+    const d = new Date(value);
+    return isNaN(d) ? null : d;
+  }
+  // Date or timestamp number
+  const d = new Date(value);
+  return isNaN(d) ? null : d;
+};
+
 export const formatDate = (date) => {
-  return new Intl.DateTimeFormat('pt-BR').format(new Date(date));
+  const d = parseDateLocal(date);
+  return d ? new Intl.DateTimeFormat('pt-BR').format(d) : '';
 };
 
 export const calculateDiscount = (originalPrice, salePrice) => {
@@ -26,15 +58,7 @@ export const slugify = (text) => {
 };
 
 // Returns a valid Date if possible, otherwise null (no throw)
-export const parseDateSafe = (value) => {
-  if (!value) return null;
-  try {
-    const d = new Date(value.seconds ? value.seconds * 1000 : value);
-    return isNaN(d.getTime()) ? null : d;
-  } catch {
-    return null;
-  }
-};
+export const parseDateSafe = (value) => parseDateLocal(value);
 
 // Determine the best start date for a package for sorting purposes
 // Priority: departureDate -> earliest departureLocations[i].date -> null

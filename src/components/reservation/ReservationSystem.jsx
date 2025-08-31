@@ -5,6 +5,7 @@ import {
   MapPin, Phone, FileText, UserPlus, Trash2, Info
 } from 'lucide-react';
 import Button from '../common/Button';
+import { formatDate } from '../../utils/helpers';
 import { useReservation } from '../../hooks/useReservation';
 
 const ReservationSystem = ({ 
@@ -247,7 +248,7 @@ const TripInfoStep = ({ reservationData, updateReservationData }) => {
           </label>
           {isFromPackage ? (
             <div className="w-full px-4 py-3 bg-neutral-100 border border-neutral-300 rounded-lg text-neutral-700">
-              {tripInfo.departureDate ? new Date(tripInfo.departureDate).toLocaleDateString('pt-BR') : 'A definir'}
+              {tripInfo.departureDate ? formatDate(tripInfo.departureDate) : 'A definir'}
             </div>
           ) : (
             <input
@@ -265,7 +266,7 @@ const TripInfoStep = ({ reservationData, updateReservationData }) => {
           </label>
           {isFromPackage ? (
             <div className="w-full px-4 py-3 bg-neutral-100 border border-neutral-300 rounded-lg text-neutral-700">
-              {tripInfo.returnDate ? new Date(tripInfo.returnDate).toLocaleDateString('pt-BR') : 'A definir'}
+              {tripInfo.returnDate ? formatDate(tripInfo.returnDate) : 'A definir'}
             </div>
           ) : (
             <input
