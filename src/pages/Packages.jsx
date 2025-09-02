@@ -437,6 +437,7 @@ const Packages = () => {
             <Button 
               variant="outline"
               size="xl"
+              onClick={() => openWhatsApp("Olá! Gostaria de falar com um consultor. Podem me ajudar?")}
               className="border-2 border-white/30 text-white hover:bg-white hover:text-primary-700 backdrop-blur-sm bg-white/10 transform hover:scale-105 transition-all duration-300"
             >
               Falar com Consultor
