@@ -150,7 +150,7 @@ const Packages = () => {
             <p className="text-xl md:text-2xl text-white/90 mb-12 leading-relaxed max-w-3xl mx-auto">
               Descubra experiências únicas com nossos pacotes nacionais e internacionais. 
               <br className="hidden md:block" />
-              Conforto, segurança e momentos inesquecíveis.
+               Conforto, segurança e momentos inesquecíveis.
             </p>
           </div>
         </div>

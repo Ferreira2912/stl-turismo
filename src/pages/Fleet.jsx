@@ -430,6 +430,7 @@ const Fleet = () => {
             <Button 
               variant="outline"
               size="xl"
+              onClick={() => openWhatsApp("Olá! Gostaria de verificar a disponibilidade da frota para minha viagem.")}
               className="border-2 border-white/30 text-white hover:bg-white hover:text-primary-700 backdrop-blur-sm bg-white/10 transform hover:scale-105 transition-all duration-300"
             >
               <Car size={20} className="mr-2" />

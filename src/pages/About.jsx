@@ -182,14 +182,7 @@ const About = () => {
               Fale Conosco
             </Button>
             
-            <Button 
-              variant="outline"
-              size="xl"
-              className="border-2 border-white/30 text-white hover:bg-white hover:text-primary-700 backdrop-blur-sm bg-white/10 transform hover:scale-105 transition-all duration-300"
-            >
-              <Phone size={20} className="mr-2" />
-              Ligar Agora
-            </Button>
+            {/* Botão 'Ligar Agora' removido conforme solicitado */}
           </div>
         </div>
       </section>
