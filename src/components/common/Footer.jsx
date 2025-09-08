@@ -104,6 +104,23 @@ const Footer = () => {
               Voltar ao Topo
             </button>
           </div>
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-[1.125rem] text-gray-400">
+            <span className="tracking-wide uppercase leading-none">desenvolvido por</span>
+            <a 
+              href="https://www.instagram.com/agenciamontrealsr" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              aria-label="Agência Montreal no Instagram"
+              className="group"
+            >
+              <img
+                src="/logoWhiteMontreal.png"
+                alt="Agência Montreal"
+                className="h-9 w-auto opacity-80 group-hover:opacity-100 transition-opacity"
+                loading="lazy"
+              />
+            </a>
+          </div>
         </div>
       </div>
     </footer>
