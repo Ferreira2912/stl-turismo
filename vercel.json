@@ -1,20 +1,8 @@
 {
-  "routes": [
+  "rewrites": [
     {
-      "src": "/prerender/(.*)",
-      "dest": "/api/prerender?path=$1"
-    },
-    {
-      "src": "/(.*)",
-      "headers": { "x-use-prerender-check": "1" },
-      "dest": "/api/prerender?path=$1",
-      "has": [
-        { "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|YandexBot|DuckDuckBot|Twitterbot|facebookexternalhit|Slackbot|LinkedInBot|Embedly|baiduspider|pinterest|crawler|spider|bot).*" }
-      ]
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
