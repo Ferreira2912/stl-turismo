@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
+import { X, Upload, Image as ImageIcon, Trash2, Copy } from 'lucide-react';
 import { addPackage, updatePackage } from '../../services/database';
 import { uploadMultipleImages } from '../../services/storage';
 
