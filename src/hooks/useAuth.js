@@ -29,21 +29,21 @@ export const useAuth = () => {
           displayName: 'Admin STL'
         };
         setUser(mockUser);
-        console.log('🔑 Admin logado (mock):', mockUser.email);
+  if (import.meta.env.DEV) console.log('🔑 Admin logado (mock):', mockUser.email);
         return mockUser;
       }
       
       // Tentar Firebase se as credenciais estão configuradas
       try {
         const result = await signInWithEmailAndPassword(auth, email, password);
-        console.log('🔑 Admin logado (Firebase):', result.user.email);
+  if (import.meta.env.DEV) console.log('🔑 Admin logado (Firebase):', result.user.email);
         return result.user;
       } catch (firebaseError) {
-        console.warn('⚠️ Firebase não configurado, usando apenas mock');
+  if (import.meta.env.DEV) console.warn('⚠️ Firebase não configurado, usando apenas mock');
         throw new Error('Credenciais inválidas. Use: admin@stlturismo.com / admin123');
       }
     } catch (error) {
-      console.error('❌ Erro no login:', error);
+  if (import.meta.env.DEV) console.error('❌ Erro no login:', error);
       setError(error.message);
       throw error;
     } finally {
@@ -54,9 +54,9 @@ export const useAuth = () => {
   const signOutUser = async () => {
     try {
       await signOut(auth);
-      console.log('👋 Admin deslogado');
+  if (import.meta.env.DEV) console.log('👋 Admin deslogado');
     } catch (error) {
-      console.error('❌ Erro no logout:', error);
+  if (import.meta.env.DEV) console.error('❌ Erro no logout:', error);
       setError(error.message);
     }
   };

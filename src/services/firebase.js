@@ -12,11 +12,15 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Debug log para verificar se as variáveis estão sendo carregadas
-console.log('Firebase Config:', {
-  ...firebaseConfig,
-  apiKey: firebaseConfig.apiKey ? firebaseConfig.apiKey.substring(0, 10) + '...' : 'undefined'
-});
+// Debug somente em desenvolvimento
+if (import.meta.env.DEV) {
+  console.log('Firebase Config (dev):', {
+    projectId: firebaseConfig.projectId,
+    authDomain: firebaseConfig.authDomain,
+    storageBucket: firebaseConfig.storageBucket,
+    apiKeyPrefix: firebaseConfig.apiKey ? firebaseConfig.apiKey.substring(0, 6) + '...' : 'undefined'
+  });
+}
 
 const app = initializeApp(firebaseConfig);
 
