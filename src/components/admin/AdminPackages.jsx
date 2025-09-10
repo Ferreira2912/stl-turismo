@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Eye, Filter, Copy } from 'lucide-react';
 import { getAllPackages, deletePackage } from '../../services/database';
 import AdminPackageForm from './AdminPackageForm';
-
+ 
 const AdminPackages = () => {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
