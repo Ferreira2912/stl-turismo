@@ -159,6 +159,19 @@ export const deletePackage = async (packageId) => {
   }
 };
 
+// Exclusão permanente do pacote (hard delete)
+export const hardDeletePackage = async (packageId) => {
+  try {
+    const docRef = doc(db, 'packages', packageId);
+    await deleteDoc(docRef);
+    console.log('🗑️ Pacote excluído permanentemente:', packageId);
+    return true;
+  } catch (error) {
+    console.error('❌ Erro ao excluir pacote permanentemente:', error);
+    throw error;
+  }
+};
+
 // ===== RESERVAS =====
 
 export const createReservation = async (reservationData) => {

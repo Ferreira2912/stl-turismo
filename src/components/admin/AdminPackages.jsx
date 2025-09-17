@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Eye, Filter, Copy } from 'lucide-react';
-import { getAllPackages, deletePackage } from '../../services/database';
+import { Plus, Edit, Trash2, Eye, EyeOff, Filter, Copy } from 'lucide-react';
+import { getAllPackages, hardDeletePackage, updatePackage } from '../../services/database';
 import AdminPackageForm from './AdminPackageForm';
  
 const AdminPackages = () => {
@@ -42,14 +42,27 @@ const AdminPackages = () => {
     }
   };
 
-  const handleDelete = async (packageId) => {
-    if (window.confirm('Tem certeza que deseja desativar este pacote?')) {
+  const handleToggleActive = async (pkg) => {
+    const action = pkg.active ? 'desativar' : 'reativar';
+    if (window.confirm(`Tem certeza que deseja ${action} este pacote?`)) {
       try {
-        await deletePackage(packageId);
+        await updatePackage(pkg.id, { active: !pkg.active });
         await loadPackages();
       } catch (error) {
-        console.error('Erro ao deletar pacote:', error);
-        alert('Erro ao deletar pacote');
+        console.error(`Erro ao ${action} pacote:`, error);
+        alert(`Erro ao ${action} pacote`);
+      }
+    }
+  };
+
+  const handleHardDelete = async (packageId) => {
+    if (window.confirm('Esta ação é permanente. Deseja excluir este pacote definitivamente?')) {
+      try {
+        await hardDeletePackage(packageId);
+        await loadPackages();
+      } catch (error) {
+        console.error('Erro ao excluir pacote permanentemente:', error);
+        alert('Erro ao excluir pacote');
       }
     }
   };
@@ -182,7 +195,7 @@ const AdminPackages = () => {
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           <div className="flex items-center">
             <div className="p-3 bg-red-100 rounded-full">
-              <Trash2 className="w-6 h-6 text-red-600" />
+              <EyeOff className="w-6 h-6 text-red-600" />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Inativos</p>
@@ -294,9 +307,16 @@ const AdminPackages = () => {
                         <Copy className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(pkg.id)}
+                        onClick={() => handleToggleActive(pkg)}
+                        className={`${pkg.active ? 'text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50' : 'text-green-600 hover:text-green-800 hover:bg-green-50'} p-1 rounded`}
+                        title={pkg.active ? 'Desativar' : 'Reativar'}
+                      >
+                        {pkg.active ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                      <button
+                        onClick={() => handleHardDelete(pkg.id)}
                         className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
-                        title="Desativar"
+                        title="Excluir permanentemente"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
