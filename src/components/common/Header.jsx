@@ -41,9 +41,9 @@ const Header = ({ transparentOnTop = false }) => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center hover:scale-105 transition-transform duration-300">
               <img 
-                src="/stl2.png" 
+                src={isTransparent ? "/stl3.png" : "/stl2.png"}
                 alt="STL Turismo" 
-                className={`h-12 w-auto ${isTransparent ? 'filter drop-shadow-md brightness-0 invert' : ''}`}
+                className={`h-12 w-auto transition-all duration-300 ${isTransparent ? 'filter drop-shadow-md brightness-0 invert' : ''}`}
               />
             </Link>
           </div>

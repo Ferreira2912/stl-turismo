@@ -395,6 +395,8 @@ const AdminPackageForm = ({ isOpen, onClose, packageData = null, onSuccess, isCo
             >
               <option value="maritimo">Marítimo</option>
               <option value="rodoviario">Rodoviário</option>
+              <option value="aereo">Aéreo</option>
+              <option value="misto">Misto</option>
             </select>
           </div>
 

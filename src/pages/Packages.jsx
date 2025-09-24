@@ -70,8 +70,10 @@ const Packages = () => {
   // featured removed
     national: packages.filter(p => p.category === 'nacional').length,
     international: packages.filter(p => p.category === 'internacional').length,
-    maritimo: packages.filter(p => p.transportMode === 'maritimo' || p.transportMode === 'aereo' || p.transportMode === 'misto').length,
-    rodoviario: packages.filter(p => p.transportMode === 'rodoviario').length
+    maritimo: packages.filter(p => p.transportMode === 'maritimo').length,
+    aereo: packages.filter(p => p.transportMode === 'aereo').length,
+    rodoviario: packages.filter(p => p.transportMode === 'rodoviario').length,
+    misto: packages.filter(p => p.transportMode === 'misto').length
   };
 
   // Filtros e busca
@@ -80,8 +82,10 @@ const Packages = () => {
   // featured filter removed
       if (filter === 'national') return pkg.category === 'nacional';
       if (filter === 'international') return pkg.category === 'internacional';
-      if (filter === 'maritimo') return pkg.transportMode === 'maritimo' || pkg.transportMode === 'aereo' || pkg.transportMode === 'misto';
+      if (filter === 'maritimo') return pkg.transportMode === 'maritimo';
+      if (filter === 'aereo') return pkg.transportMode === 'aereo';
       if (filter === 'rodoviario') return pkg.transportMode === 'rodoviario';
+      if (filter === 'misto') return pkg.transportMode === 'misto';
       return true;
     })
     .filter(pkg => 
@@ -191,7 +195,9 @@ const Packages = () => {
                   { key: 'national', label: 'Nacional', icon: MapPin },
                   { key: 'international', label: 'Internacional', icon: MapPin },
                   { key: 'maritimo', label: 'Marítimo', icon: Ship },
-                  { key: 'rodoviario', label: 'Rodoviário', icon: Bus }
+                  { key: 'aereo', label: 'Aéreo', icon: Plane },
+                  { key: 'rodoviario', label: 'Rodoviário', icon: Bus },
+                  { key: 'misto', label: 'Misto', icon: Ship }
                 ].map(({ key, label, icon: Icon }) => {
                   const active = filter === key;
                   return (
@@ -283,12 +289,17 @@ const Packages = () => {
                         {/* Transport Mode Badge */}
                         {pkg.transportMode && (
                           <div className={`absolute top-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-semibold shadow-md flex items-center gap-1
-                            ${(pkg.transportMode === 'maritimo' || pkg.transportMode === 'aereo' || pkg.transportMode === 'misto') ? 'bg-blue-600 text-white' : pkg.transportMode === 'rodoviario' ? 'bg-emerald-600 text-white' : 'bg-purple-600 text-white'}`}
+                            ${pkg.transportMode === 'aereo' ? 'bg-sky-500 text-white' : 
+                              pkg.transportMode === 'maritimo' ? 'bg-blue-600 text-white' : 
+                              pkg.transportMode === 'rodoviario' ? 'bg-emerald-600 text-white' : 
+                              pkg.transportMode === 'misto' ? 'bg-purple-600 text-white' : 'bg-gray-600 text-white'}`}
                           >
-                            {(pkg.transportMode === 'maritimo' || pkg.transportMode === 'aereo' || pkg.transportMode === 'misto') && <Ship size={12} />}
+                            {pkg.transportMode === 'aereo' && <Plane size={12} />}
+                            {pkg.transportMode === 'maritimo' && <Ship size={12} />}
                             {pkg.transportMode === 'rodoviario' && <Bus size={12} />}
+                            {pkg.transportMode === 'misto' && <Ship size={12} />}
                             <span className="capitalize">
-                              {pkg.transportMode === 'aereo' || pkg.transportMode === 'misto' ? 'Marítimo' : pkg.transportMode}
+                              {pkg.transportMode}
                             </span>
                           </div>
                         )}
