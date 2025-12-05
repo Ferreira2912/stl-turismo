@@ -33,8 +33,8 @@ const Header = ({ transparentOnTop = false }) => {
       isTransparent
         ? 'bg-transparent border-transparent shadow-none'
         : isScrolled
-          ? 'bg-sky-700/95 text-white backdrop-blur-lg shadow-lg border-sky-700'
-          : 'bg-sky-600 text-white shadow-sm border-sky-700'
+          ? 'bg-[#0065fd]/95 text-white backdrop-blur-lg shadow-lg border-[#0065fd]'
+          : 'bg-[#0065fd] text-white shadow-sm border-[#0065fd]'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
@@ -93,7 +93,7 @@ const Header = ({ transparentOnTop = false }) => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className={`md:hidden ${isTransparent ? 'bg-neutral-900/70 text-white' : 'bg-sky-700/95 text-white'} backdrop-blur-md border-t ${isTransparent ? 'border-white/10' : 'border-sky-600'}`}>
+        <div className={`md:hidden ${isTransparent ? 'bg-neutral-900/70 text-white' : 'bg-[#0065fd]/95 text-white'} backdrop-blur-md border-t ${isTransparent ? 'border-white/10' : 'border-[#0065fd]'}`}>
           <div className="px-4 py-6 space-y-4">
             {NAVIGATION_ITEMS.map((item) => (
               <Link
